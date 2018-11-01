@@ -59,6 +59,19 @@ body {
   padding: 70px 0 0;
 }
 
+.analytics-box-holder {
+  column-count: 2;
+  column-gap: 0;
+  margin-left: -10px;
+  margin-right: -10px;
+}
+
+.analytics-box-holder .analytics-box-container {
+  width: 100%;
+  padding: 0 10px;
+  display: inline-block;
+}
+
 .analytics-box {
   background-color: #f4f2f7;
   padding: 10px;

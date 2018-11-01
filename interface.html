@@ -13,17 +13,6 @@
         <span class="analytics-date-range">&nbsp;</span>
       </div>
       <div class="analytics-box">
-        <div class="analytics-box-title-block">APP METRICS</div>
-        <div class="analytics-title-row">
-          <div class="analytics-title-metric">Metric</div>
-          <div class="analytics-title-prior-period">Prior period</div>
-          <div class="analytics-title-select-period">Selected period</div>
-        </div>
-        <div class="analytics-row-wrapper-metrics">
-          <!--Content will be loaded here from handlebars template-->
-        </div>
-      </div>
-      <div class="analytics-box">
         <div class="analytics-box-title-block">TIMELINE
         </div>
         <form class="timeline-radio-selectors">
@@ -46,64 +35,87 @@
         </form>
         <div class="chart-holder"></div>
       </div>
-      <div class="analytics-box">
-        <div class="analytics-box-title-block">MOST ACTIVE USERS</div>
-        <form class="users-radio-selectors">
-          <label class="radio-label">
-            <input type="radio" name="users-selector" value="users-sessions">
-            <span class="radio-label-btn">Sessions</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="users-selector" value="users-screen-views">
-            <span class="radio-label-btn">Screen views</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="users-selector" value="users-clicks">
-            <span class="radio-label-btn">Clicks</span>
-          </label>
-        </form>
-        <div class="analytics-row-wrapper analytics-row-wrapper-users">
-          <!--Content will be loaded here from handlebars template-->
+      <div class="analytics-box-holder">
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">APP METRICS</div>
+            <div class="analytics-title-row">
+              <div class="analytics-title-metric">Metric</div>
+              <div class="analytics-title-prior-period">Prior period</div>
+              <div class="analytics-title-select-period">Selected period</div>
+            </div>
+            <div class="analytics-row-wrapper-metrics">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+          </div>
         </div>
-        <div class="see-more more-active-users">See all
-          <span class="fa fa-long-arrow-right"></span>
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">MOST ACTIVE USERS</div>
+            <form class="users-radio-selectors">
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-sessions">
+                <span class="radio-label-btn">Sessions</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-screen-views">
+                <span class="radio-label-btn">Screen views</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-clicks">
+                <span class="radio-label-btn">Clicks</span>
+              </label>
+            </form>
+            <div class="analytics-row-wrapper analytics-row-wrapper-users">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+            <div class="see-more more-active-users">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+          <div class="analytics-box actions-by-user">
+            <span class="analytics-box-title-span">ACTIONS PER USER</span>
+            <div class="see-more inline more-actions-by-user">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="analytics-box actions-by-user">
-        <span class="analytics-box-title-span">ACTIONS PER USER</span>
-        <div class="see-more inline more-actions-by-user">See all
-          <span class="fa fa-long-arrow-right"></span>
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">MOST POPULAR SCREENS
+            </div>
+            <form class="screens-radio-selectors">
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-screen-views">
+                <span class="radio-label-btn">Screen-views</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-sessions">
+                <span class="radio-label-btn">Sessions</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-clicks">
+                <span class="radio-label-btn">Clicks</span>
+              </label>
+            </form>
+            <div class="analytics-row-wrapper analytics-row-wrapper-screen">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+            <div class="see-more more-popular-sessions">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+          <div class="analytics-box actions-by-screen">
+            <span class="analytics-box-title-span">ACTIONS PER SCREEN</span>
+            <div class="see-more inline more-actions-by-screen">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="analytics-box">
-        <div class="analytics-box-title-block">MOST POPULAR SCREENS
-        </div>
-        <form class="screens-radio-selectors">
-          <label class="radio-label">
-            <input type="radio" name="screen-selector" value="screens-screen-views">
-            <span class="radio-label-btn">Screen-views</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="screen-selector" value="screens-sessions">
-            <span class="radio-label-btn">Sessions</span>
-          </label>
-          <label class="radio-label">
-            <input type="radio" name="screen-selector" value="screens-clicks">
-            <span class="radio-label-btn">Clicks</span>
-          </label>
-        </form>
-        <div class="analytics-row-wrapper analytics-row-wrapper-screen">
-          <!--Content will be loaded here from handlebars template-->
-        </div>
-        <div class="see-more more-popular-sessions">See all
-          <span class="fa fa-long-arrow-right"></span>
-        </div>
-      </div>
-      <div class="analytics-box actions-by-screen">
-        <span class="analytics-box-title-span">ACTIONS PER SCREEN</span>
-        <div class="see-more inline more-actions-by-screen">See all
-          <span class="fa fa-long-arrow-right"></span>
-        </div>
+
       </div>
     </div>
     <!--date picker-->
