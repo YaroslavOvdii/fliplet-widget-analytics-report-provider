@@ -1,0 +1,1 @@
+# fliplet-widget-analytics-report-provider
