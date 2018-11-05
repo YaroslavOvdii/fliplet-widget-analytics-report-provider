@@ -64,6 +64,7 @@ body {
   column-gap: 0;
   margin-left: -10px;
   margin-right: -10px;
+  max-height: 622px;
 }
 
 .analytics-box-holder .analytics-box-container {
@@ -264,7 +265,7 @@ span.analytics-box-number-prior {
   height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: #f4f2f7;
+  background-color: #ffffff;
   position: fixed;
   top: 0;
   top: env(safe-area-inset-top);

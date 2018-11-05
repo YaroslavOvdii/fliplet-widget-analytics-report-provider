@@ -531,7 +531,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
   }
 
-  function getDataFromPersistantVariable() {
+  function getDataFromPersistantVariable(fromStart) {
 
     // get dates and times
     Fliplet.App.Storage.get('analyticsDateTime')
@@ -558,6 +558,12 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .then(function(analyticsDataArray) {
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
+
+          if (fromStart) {
+            $('.app-analytics-container').removeClass('hidden');
+            $('.loading-state').addClass('hidden');
+            Fliplet.Widget.autosize();
+          }
         } else {
           Promise.all([
             getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
@@ -567,6 +573,12 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           ]).then(function(data) {
             var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
             prepareDataToRender(data, periodDurationInSeconds, 'hour');
+
+            if (fromStart) {
+              $('.app-analytics-container').removeClass('hidden');
+              $('.loading-state').addClass('hidden');
+              Fliplet.Widget.autosize();
+            }
           }).catch(function(error) {
             console.error(error)
           });
@@ -1412,11 +1424,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     chartInitialization(chartContainer, getChartConfig());
 
     // Run once on load
-    getDataFromPersistantVariable();    
+    getDataFromPersistantVariable(true);    
   }
 
   start();
-  Fliplet.Widget.autosize();
 
   return {
     getChartConfig: getChartConfig,
