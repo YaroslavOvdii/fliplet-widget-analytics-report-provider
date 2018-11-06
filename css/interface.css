@@ -49,14 +49,21 @@ body {
 }
 
 .app-analytics-container .agenda-icon {
-  font-size: 30px;
+  font-size: 20px;
   cursor: pointer;
+  background-color: #333333;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /*main content*/
 
 .analytics-main-content {
-  padding: 70px 0 0;
+  padding: 5px 0 0;
 }
 
 .analytics-box-holder {
@@ -81,18 +88,23 @@ body {
 
 .timeframe-text,
 .actions-by-screen,
-.actions-by-user {
+.actions-by-user,
+.date-box {
   display: flex;
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
 }
 
+.analytics-date-range + .agenda-icon {
+  margin-left: 10px;
+}
+
 .analytics-box-row {
   margin: 10px 0 10px 0;
 }
 
-span.analytics-box-title-span {
+.analytics-box-title-span {
   font-size: 16px;
 }
 
