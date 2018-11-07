@@ -1,0 +1,42 @@
+{
+  "name": "Analytics report provider",
+  "package": "com.fliplet.analytics-report-provider",
+  "version": "1.0.0",
+  "icon": "img/icon.png",
+  "tags": ["category:general"],
+  "provider_only": true,
+  "references": [],
+  "html_tag": "div",
+  "interface": {
+    "dependencies": [
+      "fliplet-core",
+      "fliplet-studio-ui",
+      "highcharts",
+      "handlebars",
+      "moment",
+      "jquery",
+      "bootstrap",
+      "font-awesome"
+    ],
+    "assets": [
+      "vendor/bootstrap-datepicker3.css",
+      "vendor/jquery.dataTables.min.css",
+      "vendor/responsive.dataTables.min.css",
+      "vendor/bootstrap-datepicker.js",
+      "vendor/jquery.dataTables.min.js",
+      "vendor/dataTables.responsive.min.js",
+      "vendor/dataTables.buttons.js",
+      "vendor/buttons.html5.min.js",
+      "vendor/buttons.flash.min.js",
+      "vendor/jszip.min.js",
+      "js/interface.templates.js",
+      "js/libs.js",
+      "css/interface.css",
+      "js/interface.js"
+    ]
+  },
+  "build": {
+    "dependencies": [],
+    "assets": []
+  }
+}

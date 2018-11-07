@@ -1,0 +1,298 @@
+<div class="widget-holder">
+
+  <div class="loading-state">
+    <div class="spinner-holder animated">
+      <div class="spinner-overlay">Loading...</div>
+    </div>
+  </div>
+  <div class="app-analytics-container hidden">
+    <div class="analytics-main-content">
+      <div class="analytics-box timeframe-text">
+        <div class="analytics-box-title-span">TIMEFRAME</div>
+        <div class="date-box">
+          <span class="analytics-date-range">&nbsp;</span>
+          <span class="fa fa-calendar agenda-icon"></span>
+        </div>
+      </div>
+      <div class="analytics-box">
+        <div class="analytics-box-title-block">TIMELINE
+        </div>
+        <form class="timeline-radio-selectors">
+          <label class="radio-label">
+            <input type="radio" name="timeline-selector" value="timeline-active-users">
+            <span class="radio-label-btn">Active devices</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="timeline-selector" value="timeline-sessions">
+            <span class="radio-label-btn">Sessions</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="timeline-selector" value="timeline-screen-views">
+            <span class="radio-label-btn">Screen views</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="timeline-selector" value="timeline-clicks">
+            <span class="radio-label-btn">Interactions</span>
+          </label>
+        </form>
+        <div class="chart-holder"></div>
+      </div>
+      <div class="analytics-box-holder">
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">APP METRICS</div>
+            <div class="analytics-title-row">
+              <div class="analytics-title-metric">Metric</div>
+              <div class="analytics-title-prior-period">Prior period</div>
+              <div class="analytics-title-select-period">Selected period</div>
+            </div>
+            <div class="analytics-row-wrapper-metrics">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">MOST ACTIVE USERS</div>
+            <form class="users-radio-selectors">
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-sessions">
+                <span class="radio-label-btn">Sessions</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-screen-views">
+                <span class="radio-label-btn">Screen views</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="users-selector" value="users-clicks">
+                <span class="radio-label-btn">Clicks</span>
+              </label>
+            </form>
+            <div class="analytics-row-wrapper analytics-row-wrapper-users">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+            <div class="see-more more-active-users">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+          <div class="analytics-box actions-by-user">
+            <span class="analytics-box-title-span">ACTIONS PER USER</span>
+            <div class="see-more inline more-actions-by-user">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-box-container">
+          <div class="analytics-box">
+            <div class="analytics-box-title-block">MOST POPULAR SCREENS
+            </div>
+            <form class="screens-radio-selectors">
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-screen-views">
+                <span class="radio-label-btn">Screen-views</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-sessions">
+                <span class="radio-label-btn">Sessions</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-clicks">
+                <span class="radio-label-btn">Clicks</span>
+              </label>
+            </form>
+            <div class="analytics-row-wrapper analytics-row-wrapper-screen">
+              <!--Content will be loaded here from handlebars template-->
+            </div>
+            <div class="see-more more-popular-sessions">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+          <div class="analytics-box actions-by-screen">
+            <span class="analytics-box-title-span">ACTIONS PER SCREEN</span>
+            <div class="see-more inline more-actions-by-screen">See all
+              <span class="fa fa-long-arrow-right"></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!--date picker-->
+    <div class="full-screen-overlay date-picker">
+      <div class="apply-button">APPLY
+      </div>
+      <div class="close-button">
+        <span class="fa fa-times"></span>
+      </div>
+      <div class="options-wrapper">
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-24-hours" name="date-selector">
+            <span class="check"></span>
+            Last 24 hours
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-7-days" name="date-selector">
+            <div class="check"></div>
+            Last 7 days
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-30-days" name="date-selector">
+            <div class="check"></div>
+            Last 30 days
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-90-days" name="date-selector">
+            <div class="check"></div>
+            Last 90 days
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-6-months" name="date-selector">
+            <div class="check"></div>
+            Last 6 months
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="last-12-months" name="date-selector">
+            <div class="check"></div>
+            Last 12 months
+          </label>
+        </div>
+        <div class="options-row">
+          <label class="radio-label">
+            <input type="radio" class="date-picker-option" value="custom-dates" name="date-selector">
+            <div class="check"></div>
+            Custom dates
+          </label>
+        </div>
+        <div class="custom-dates-inputs">
+          <div class="custom-dates-hidden-content">
+            <div class="custom-dates-label">START DATE
+            </div>
+            <input type="text" class="datepicker noBlueHighlight pickerStartDate" placeholder="Start date">
+            <div class="custom-dates-alert custom-start-date-alert">Please enter a valid start date
+            </div>
+            <div class="custom-dates-label">END DATE
+            </div>
+            <input type="text" class="datepicker noBlueHighlight pickerEndDate" placeholder="End date">
+            <div class="custom-dates-alert custom-end-date-alert">Please enter a valid end date
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--active users overlay-->
+    <div class="full-screen-overlay active-users-overlay">
+      <div class="close-button">
+        <span class="fa fa-times"></span>
+      </div>
+      <div class="options-wrapper">
+        <table class="display responsive active-users-full-table-sessions" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">User email</th>
+              <th>Sessions</th>
+            </tr>
+          </thead>
+        </table>
+        <table class="display responsive hidden active-users-full-table-views" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">User email</th>
+              <th>Screen views</th>
+            </tr>
+          </thead>
+        </table>
+        <table class="display responsive hidden active-users-full-table-clicks" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">User email</th>
+              <th>Clicks</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+    <!--actions per user overlay-->
+    <div class="full-screen-overlay actions-per-user-overlay">
+      <div class="close-button">
+        <span class="fa fa-times"></span>
+      </div>
+      <div class="options-wrapper">
+        <table class="display responsive actions-per-user" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">User email</th>
+              <th>Event category</th>
+              <th data-priority="2">Event action</th>
+              <th>Event label</th>
+              <th>Screen</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+    <!-- popular-sessions-overlay -->
+    <div class="full-screen-overlay popular-sessions-overlay">
+      <div class="close-button">
+        <span class="fa fa-times"></span>
+      </div>
+      <div class="options-wrapper">
+        <table class="display responsive hidden popular-sessions-full-table-views" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">Screen name</th>
+              <th>Screen views</th>
+            </tr>
+          </thead>
+        </table>
+        <table class="display responsive hidden popular-sessions-full-table-sessions" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">Screen name</th>
+              <th>Sessions</th>
+            </tr>
+          </thead>
+        </table>
+        <table class="display responsive hidden popular-sessions-full-table-clicks" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">Screen name</th>
+              <th>Clicks</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+    <!--actions per screen overlay-->
+    <div class="full-screen-overlay actions-per-screen-overlay">
+      <div class="close-button">
+        <span class="fa fa-times"></span>
+      </div>
+      <div class="options-wrapper">
+        <table class="display responsive actions-per-screen" width="100%">
+          <thead>
+            <tr>
+              <th data-priority="1">Screen name</th>
+              <th>Event category</th>
+              <th data-priority="2">Event action</th>
+              <th>Event label</th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
