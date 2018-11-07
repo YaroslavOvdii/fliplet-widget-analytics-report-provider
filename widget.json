@@ -1,6 +1,6 @@
 {
   "name": "Analytics report",
-  "package": "com.fliplet.analytics-report-provider",
+  "package": "com.fliplet.analytics-report",
   "version": "1.0.0",
   "icon": "img/icon.png",
   "tags": ["category:general"],
