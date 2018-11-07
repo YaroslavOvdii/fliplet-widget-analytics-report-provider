@@ -892,6 +892,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         getChart().series[1].setData(timelineInteractionsData);
         break;
     }
+
+    Fliplet.Widget.autosize();
   }
 
   function getMetricsData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
