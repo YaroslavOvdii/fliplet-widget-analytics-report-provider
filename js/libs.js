@@ -287,6 +287,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     }
   };
 
+  function startLoading() {
+    $('.loading-state').removeClass('hidden');
+    $('.app-analytics-container').addClass('hidden');
+  }
+
+  function stopLoading() {
+    $('.app-analytics-container').removeClass('hidden');
+    $('.loading-state').addClass('hidden');
+  }
+
   function registerHandlebarsHelpers() {
     Handlebars.registerHelper('formatNumber', function(num) {
       if (!num) {
@@ -362,7 +372,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         $body.removeClass('freeze');
       })
       .on('click', '.apply-button', function() {
-        var dateValue = $(this).parents('.date-picker').find('input[name="date-selector"]:checked').val()
+        var dateValue = $(this).parents('.date-picker').find('input[name="date-selector"]:checked').val();
+
+        // Add spinner
+        startLoading();
+
         switch (dateValue) {
           case 'last-24-hours':
             dateSelectMode = dateValue;
@@ -541,7 +555,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
   }
 
-  function getDataFromPersistantVariable(fromStart) {
+  function getDataFromPersistantVariable() {
 
     // get dates and times
     Fliplet.App.Storage.get('analyticsDateTime')
@@ -569,11 +583,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
 
-          if (fromStart) {
-            $('.app-analytics-container').removeClass('hidden');
-            $('.loading-state').addClass('hidden');
-            Fliplet.Widget.autosize();
-          }
+          stopLoading();
+          Fliplet.Widget.autosize();
         } else {
           Promise.all([
             getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
@@ -584,11 +595,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
             prepareDataToRender(data, periodDurationInSeconds, 'hour');
 
-            if (fromStart) {
-              $('.app-analytics-container').removeClass('hidden');
-              $('.loading-state').addClass('hidden');
-              Fliplet.Widget.autosize();
-            }
+            stopLoading();
+            Fliplet.Widget.autosize();
           }).catch(function(error) {
             console.error(error)
           });
@@ -680,6 +688,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     ]).then(function(data) {
       var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
       prepareDataToRender(data, periodDurationInSeconds, context)
+
+      stopLoading();
+      Fliplet.Widget.autosize();
     }).catch(function(error) {
       console.error(error)
     });
@@ -1437,7 +1448,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     chartInitialization(chartContainer, getChartConfig());
 
     // Run once on load
-    getDataFromPersistantVariable(true);    
+    getDataFromPersistantVariable();    
   }
 
   start();
