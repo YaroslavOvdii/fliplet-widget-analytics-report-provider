@@ -287,6 +287,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     }
   };
 
+  function registerHandlebarsHelpers() {
+    Handlebars.registerHelper('formatNumber', function(num) {
+      if (!num) {
+        return;
+      }
+
+      return num.toLocaleString();
+    });
+  }
+
   function attachEventListeners() {
     
     /*********************************************************
@@ -1417,6 +1427,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       '[name="screen-selector"][value="screens-screen-views"]'
     ].join(', ');
 
+    registerHandlebarsHelpers();
     attachEventListeners();
 
     // Selects radio buttons by default

@@ -4,7 +4,7 @@
       <p>\{{ _userEmail }}</p>
     </div>
     <div class="analytics-row-score">
-      <p>\{{#if sessionsCount}}\{{sessionsCount}}\{{else}}\{{ count }}\{{/if}}</p>
+      <p>\{{#if sessionsCount}}\{{formatNumber sessionsCount}}\{{else}}\{{formatNumber count}}\{{/if}}</p>
     </div>
   </div>
 \{{/each}}
