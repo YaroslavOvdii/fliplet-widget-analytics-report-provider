@@ -366,6 +366,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.agenda-icon, .timeframe-text', function() {
         $container.find('.date-picker').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top');
       })
       .on('click', '.close-button', function() {
         $container.find('.full-screen-overlay').removeClass('active');
@@ -446,21 +447,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.more-active-users', function() {
         $container.find('.active-users-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top');
         getMoreActiveUsers();
       })
       .on('click', '.actions-by-user', function() {
         $container.find('.actions-per-user-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top');
         getUserActionData();
       })
       .on('click', '.more-popular-sessions', function() {
         $container.find('.popular-sessions-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top');
         getMorePopularScreens();
       })
       .on('click', '.actions-by-screen', function() {
         $container.find('.actions-per-screen-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top');
         getScreenActionData();
       })
       .on('change', '[name="timeline-selector"]', function() {
