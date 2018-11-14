@@ -288,7 +288,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   };
 
   function attachEventListeners() {
-    
+
     /*********************************************************
     Date picker overlay
     **********************************************************/
@@ -494,7 +494,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[2]));
             break;
         }
-      });    
+      });
   }
 
   function getChartConfig() {
@@ -903,32 +903,20 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     var previousPeriodUsers;
     var currentPeriodUsers;
 
-    // get active devices (for signed in users switch between _deviceTrackingId and _userEmail)
-    var metricDevices = Fliplet.App.Analytics.count({
-      group: ['data._deviceTrackingId'],
-      where: {
-        data: { _deviceTrackingId: { $ne: null } },
-        createdAt: {
-          $gte: moment(priorPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodStartDate).unix() * 1000
-        }
-      }
+    // get active devices
+    var metricDevices = Fliplet.App.Analytics.Devices.count({
+      from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(previousPeriod) {
       previousPeriodUsers = previousPeriod;
-      // 2. get users up to end of previous period
-      return Fliplet.App.Analytics.count({
-        group: ['data._deviceTrackingId'],
-        where: {
-          data: { _deviceTrackingId: { $ne: null } },
-          createdAt: {
-            $gte: moment(currentPeriodStartDate).unix() * 1000,
-            $lte: moment(currentPeriodEndDate).unix() * 1000
-          }
-        }
+      // 2. get devices up to end of previous period
+      return Fliplet.App.Analytics.Devices.count({
+        from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+        to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
       }).then(function(currentPeriod) {
         currentPeriodUsers = currentPeriod
         return;
-      })
+      });
     }).then(function() {
       return {
         metricActiveDevicesPrior: previousPeriodUsers,
@@ -936,37 +924,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       }
     });
 
-    // Get new users
-    var metricNewDevices = Fliplet.App.Analytics.count({
-      group: ['data._deviceTrackingId'],
-      where: {
-        data: { _deviceTrackingId: { $ne: null } },
-        createdAt: {
-          $lte: moment(priorPeriodStartDate).unix() * 1000
-        }
-      }
+    // Get new devices
+    var metricNewDevices = Fliplet.App.Analytics.Devices.count({
+      to: moment(priorPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(countUpToStartOfPriorPeriod) {
-      // 2. get users up to end of previous period
-      return Fliplet.App.Analytics.count({
-        group: ['data._deviceTrackingId'],
-        where: {
-          data: { _deviceTrackingId: { $ne: null } },
-          createdAt: {
-            $lte: moment(currentPeriodStartDate).unix() * 1000,
-          }
-        }
+      // 2. get devices up to end of previous period
+      return Fliplet.App.Analytics.Devices.count({
+        to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
       }).then(function(countUpToStartOfCurrentPeriod) {
         previousPeriodNewUsers = countUpToStartOfCurrentPeriod - countUpToStartOfPriorPeriod;
 
         // 3. get all time total count
-        return Fliplet.App.Analytics.count({
-          group: ['data._deviceTrackingId'],
-          where: {
-            data: { _deviceTrackingId: { $ne: null } },
-            createdAt: {
-              $lte: moment(currentPeriodEndDate).unix() * 1000,
-            }
-          }
+        return Fliplet.App.Analytics.Devices.count({
+          to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
         }).then(function(countUpToEndOfCurrentPeriod) {
           currentPeriodNewUsers = countUpToEndOfCurrentPeriod - countUpToStartOfCurrentPeriod;
         });
@@ -1329,7 +1299,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         }
       });
   }
-  
+
   function renderTable(data, context) {
     tableDataArray = [];
     data[configTableContext[context].dataIndex].forEach(function(row) {
@@ -1426,7 +1396,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     chartInitialization(chartContainer, getChartConfig());
 
     // Run once on load
-    getDataFromPersistantVariable(true);    
+    getDataFromPersistantVariable(true);
   }
 
   start();
