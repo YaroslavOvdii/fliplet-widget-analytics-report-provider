@@ -977,13 +977,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     var currentPeriodUsers;
 
     // get active devices
-    var metricDevices = Fliplet.App.Analytics.Devices.count({
+    var metricDevices = Fliplet.App.Analytics.Aggregate.count({
+      column: 'uniqueDevices',
       from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
       to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(previousPeriod) {
       previousPeriodUsers = previousPeriod;
       // 2. get devices up to end of previous period
-      return Fliplet.App.Analytics.Devices.count({
+      return Fliplet.App.Analytics.Aggregate.count({
+        column: 'uniqueDevices',
         from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
       }).then(function(currentPeriod) {
@@ -998,17 +1000,20 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
 
     // Get new devices
-    var metricNewDevices = Fliplet.App.Analytics.Devices.count({
+    var metricNewDevices = Fliplet.App.Analytics.Aggregate.count({
+      column: 'uniqueDevices',
       to: moment(priorPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(countUpToStartOfPriorPeriod) {
       // 2. get devices up to end of previous period
-      return Fliplet.App.Analytics.Devices.count({
+      return Fliplet.App.Analytics.Aggregate.count({
+        column: 'uniqueDevices',
         to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
       }).then(function(countUpToStartOfCurrentPeriod) {
         previousPeriodNewUsers = countUpToStartOfCurrentPeriod - countUpToStartOfPriorPeriod;
 
         // 3. get all time total count
-        return Fliplet.App.Analytics.Devices.count({
+        return Fliplet.App.Analytics.Aggregate.count({
+          column: 'uniqueDevices',
           to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
         }).then(function(countUpToEndOfCurrentPeriod) {
           currentPeriodNewUsers = countUpToEndOfCurrentPeriod - countUpToStartOfCurrentPeriod;
@@ -1154,49 +1159,31 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getActiveUserData(currentPeriodStartDate, currentPeriodEndDate, limit) {
-    var userTableSessions = Fliplet.App.Analytics.get({
-      group: ['data._userEmail'],
-      attributes: [{ distinctCount: true, col: 'data._analyticsSessionId', as: 'sessionsCount' }],
-      where: {
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      order: [
-        ['sessionsCount', 'DESC']
-      ],
-      limit: limit
+    var userTableSessions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'user',
+      sum: 'uniqueSessions',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
     });
 
-    var userTableScreenViews = Fliplet.App.Analytics.get({
-      group: ['data._userEmail'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.pageView',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
+    var userTableScreenViews = Fliplet.App.Analytics.Aggregate.get({
+      group: 'user',
+      sum: 'totalPageViews',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
     });
 
-    var userTableInteractions = Fliplet.App.Analytics.get({
-      group: ['data._userEmail'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.event',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
+    var userTableInteractions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'user',
+      sum: 'totalEvents',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
     });
 
     return Promise.all([userTableSessions, userTableScreenViews, userTableInteractions]);

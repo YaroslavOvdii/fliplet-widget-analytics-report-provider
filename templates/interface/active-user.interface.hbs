@@ -1,10 +1,10 @@
 \{{#each this}}
   <div class="analytics-row">
     <div class="analytics-row-name">
-      <p>\{{ _userEmail }}</p>
+      <p>\{{userEmail}}</p>
     </div>
     <div class="analytics-row-score">
-      <p>\{{#if sessionsCount}}\{{formatNumber sessionsCount}}\{{else}}\{{formatNumber count}}\{{/if}}</p>
+      <p>\{{formatNumber count}}</p>
     </div>
   </div>
 \{{/each}}
