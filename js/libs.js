@@ -940,7 +940,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
         // 3. get all time total count
         return Fliplet.App.Analytics.Aggregate.count({
-          column: 'uniqueDevices'
+          column: 'uniqueDevices',
           to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
         }).then(function(countUpToEndOfCurrentPeriod) {
           currentPeriodNewUsers = countUpToEndOfCurrentPeriod - countUpToStartOfCurrentPeriod;
