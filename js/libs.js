@@ -6,6 +6,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var analyticsEndDate;
   var analyticsPrevStartDate;
   var analyticsPrevEndDate;
+  var customStartDateVariable;
+  var customEndDateVariable;
+  var timeDeltaInMillisecs;
   var pvDateTimeObject;
   var pvDataArray = {};
   var timelineActiveDevicesDataPrior = [];
@@ -272,7 +275,43 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       'lineColor': '#f4f2f7'
     }],
     'tooltip': {
-      'borderWidth': 0
+      'borderWidth': 0,
+      formatter: function() {
+        var text = '';
+        var momentTime;
+
+        switch (dateSelectMode) {
+          case 'last-24-hours':
+            momentTime = moment(this.x).subtract(1, 'days');
+            break;
+          case 'last-7-days':
+            momentTime = moment(this.x).subtract(7, 'days');
+            break;
+          case 'last-30-days':
+            momentTime = moment(this.x).subtract(30, 'days');
+            break;
+          case 'last-90-days':
+            momentTime = moment(this.x).subtract(90, 'days');
+            break;
+          case 'last-6-months':
+            momentTime = moment(this.x).subtract(6, 'months');
+            break;
+          case 'last-12-months':
+            momentTime = moment(this.x).subtract(12, 'months');
+            break;
+          case 'custom-dates':
+            momentTime = moment(this.x).subtract(timeDeltaInMillisecs);
+            break;
+        }
+        if(this.series.name == 'Prior period') {
+          text = momentTime.format('MMM Do, HH:mm') + '<br><b>'
+          + this.series.name + ':</b> ' + Highcharts.numberFormat(this.y, 0);
+        } else {
+          text = moment(this.x).format('MMM Do, HH:mm') + '<br><b>'
+          + this.series.name + ':</b> ' + Highcharts.numberFormat(this.y, 0);
+        }
+        return text;
+      }
     },
     'pane': {
       'background': []
@@ -286,6 +325,26 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       },
     }
   };
+
+  function startLoading() {
+    $('.loading-state').removeClass('hidden');
+    $('.app-analytics-container').addClass('hidden');
+  }
+
+  function stopLoading() {
+    $('.app-analytics-container').removeClass('hidden');
+    $('.loading-state').addClass('hidden');
+  }
+
+  function registerHandlebarsHelpers() {
+    Handlebars.registerHelper('formatNumber', function(num) {
+      if (!num) {
+        return;
+      }
+
+      return num.toLocaleString();
+    });
+  }
 
   function attachEventListeners() {
 
@@ -346,13 +405,20 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.agenda-icon, .timeframe-text', function() {
         $container.find('.date-picker').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top', {
+          name: 'app-analytics'
+        });
       })
       .on('click', '.close-button', function() {
         $container.find('.full-screen-overlay').removeClass('active');
         $body.removeClass('freeze');
       })
       .on('click', '.apply-button', function() {
-        var dateValue = $(this).parents('.date-picker').find('input[name="date-selector"]:checked').val()
+        var dateValue = $(this).parents('.date-picker').find('input[name="date-selector"]:checked').val();
+
+        // Add spinner
+        startLoading();
+
         switch (dateValue) {
           case 'last-24-hours':
             dateSelectMode = dateValue;
@@ -397,21 +463,21 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             closeOverlay();
             break;
           case 'custom-dates':
-            var customStartDate = $(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0];
-            var customEndDate = $(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0];
-            if (typeof customStartDate === 'undefined') {
+            customStartDateVariable = $(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0];
+            customEndDateVariable = $(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0];
+            if (typeof customStartDateVariable === 'undefined') {
               $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
               $(this).parents('.date-picker').find('.custom-start-date-alert').addClass('active');
-            } else if (typeof customEndDate === 'undefined') {
+            } else if (typeof customEndDateVariable === 'undefined') {
               $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
               $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
-            } else if (customEndDate < customStartDate) {
+            } else if (customEndDateVariable < customStartDateVariable) {
               $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
               $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
             } else {
               // no validation errors so update the dates
               dateSelectMode = dateValue;
-              calculateAnalyticsDatesCustom(customStartDate, customEndDate, true);
+              calculateAnalyticsDatesCustom(customStartDateVariable, customEndDateVariable, true);
               updateTimeframe(analyticsStartDate, analyticsEndDate);
               getNewDataToRender('day', 5);
               closeOverlay();
@@ -422,21 +488,33 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.more-active-users', function() {
         $container.find('.active-users-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top', {
+          name: 'app-analytics'
+        });
         getMoreActiveUsers();
       })
       .on('click', '.actions-by-user', function() {
         $container.find('.actions-per-user-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top', {
+          name: 'app-analytics'
+        });
         getUserActionData();
       })
       .on('click', '.more-popular-sessions', function() {
         $container.find('.popular-sessions-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top', {
+          name: 'app-analytics'
+        });
         getMorePopularScreens();
       })
       .on('click', '.actions-by-screen', function() {
         $container.find('.actions-per-screen-overlay').addClass('active');
         $body.addClass('freeze');
+        Fliplet.Studio.emit('overlay-scroll-top', {
+          name: 'app-analytics'
+        });
         getScreenActionData();
       })
       .on('change', '[name="timeline-selector"]', function() {
@@ -531,7 +609,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
   }
 
-  function getDataFromPersistantVariable(fromStart) {
+  function getDataFromPersistantVariable() {
 
     // get dates and times
     Fliplet.App.Storage.get('analyticsDateTime')
@@ -559,11 +637,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
 
-          if (fromStart) {
-            $('.app-analytics-container').removeClass('hidden');
-            $('.loading-state').addClass('hidden');
-            Fliplet.Widget.autosize();
-          }
+          stopLoading();
+          Fliplet.Widget.autosize();
         } else {
           Promise.all([
             getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
@@ -574,11 +649,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
             prepareDataToRender(data, periodDurationInSeconds, 'hour');
 
-            if (fromStart) {
-              $('.app-analytics-container').removeClass('hidden');
-              $('.loading-state').addClass('hidden');
-              Fliplet.Widget.autosize();
-            }
+            stopLoading();
+            Fliplet.Widget.autosize();
           }).catch(function(error) {
             console.error(error)
           });
@@ -609,8 +681,6 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function calculateAnalyticsDatesCustom(customStartDate, customEndDate, isCustom, time, timeToGoBack) {
-    var timeDeltaInMillisecs;
-
     if (isCustom) {
       // Set start date
       analyticsStartDate = new Date(customStartDate);
@@ -670,6 +740,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     ]).then(function(data) {
       var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
       prepareDataToRender(data, periodDurationInSeconds, context)
+
+      stopLoading();
+      Fliplet.Widget.autosize();
     }).catch(function(error) {
       console.error(error)
     });
@@ -1117,54 +1190,32 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getPopularScreenData(currentPeriodStartDate, currentPeriodEndDate, limit) {
-    var screenTableScreenViews = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.pageView',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
-    })
+    var screenTableScreenViews = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'totalPageViews',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
-    var screenTableSessions = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      attributes: [{ distinctCount: true, col: 'data._analyticsSessionId', as: 'sessionsCount' }],
-      order: [
-        ['sessionsCount', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.pageView',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
-    })
+    var screenTableSessions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'uniqueSessions',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
-    var screenTableScreenInteractions = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.event',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        },
-        data: {
-          nonInteractive: null
-        }
-      },
-      limit: limit
-    })
+    var screenTableScreenInteractions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'totalEvents',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
     return Promise.all([screenTableScreenViews, screenTableSessions, screenTableScreenInteractions]);
   }
@@ -1374,6 +1425,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       '[name="screen-selector"][value="screens-screen-views"]'
     ].join(', ');
 
+    registerHandlebarsHelpers();
     attachEventListeners();
 
     // Selects radio buttons by default
@@ -1383,7 +1435,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     chartInitialization(chartContainer, getChartConfig());
 
     // Run once on load
-    getDataFromPersistantVariable(true);
+    getDataFromPersistantVariable();
   }
 
   start();
