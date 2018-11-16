@@ -1110,7 +1110,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function getTimelineData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
     var periodDurationInSeconds = (currentPeriodEndDate - currentPeriodStartDate);
-    var useLiveData = groupBy === 'day' || moment().diff(moment(priorPeriodStartDate), 'hours') <= 48;
+    var useLiveData = groupBy === 'hour' || moment().diff(moment(priorPeriodStartDate), 'hours') <= 48;
 
     if (!useLiveData) {
       return Fliplet.App.Analytics.Aggregate.get({
