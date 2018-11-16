@@ -20,6 +20,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var timelineInteractionsDataPrior = [];
   var timelineInteractionsData = [];
   var timelineChart = timelineChart || {};
+  var chartEmptyData = [[], []];
 
   var actionsPerUserTable;
   var actionsPerScreenTable;
@@ -585,6 +586,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function chartInitialization(element, options) {
     timelineChart[configuration.id] = Highcharts.chart(element, options);
+    getChart().series[0].setData(chartEmptyData);
+    getChart().series[1].setData(chartEmptyData);
   }
 
   function closeOverlay() {
@@ -833,18 +836,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       switch (index) {
         case 0:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.uniqueDeviceTracking, 10));
-            timelineActiveDevicesDataPrior.push(newArray);
+            var newPriorActiveArray = [];
+            newPriorActiveArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newPriorActiveArray.push(parseInt(obj.uniqueDeviceTracking, 10));
+            timelineActiveDevicesDataPrior.push(newPriorActiveArray);
           });
           break;
         case 1:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.uniqueDeviceTracking, 10));
-            timelineActiveDevicesData.push(newArray);
+            var newActiveArray = [];
+            newActiveArray.push(moment(obj[context]).unix() * 1000);
+            newActiveArray.push(parseInt(obj.uniqueDeviceTracking, 10));
+            timelineActiveDevicesData.push(newActiveArray);
           });
           break;
       }
@@ -863,18 +866,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       switch (index) {
         case 0:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.sessionsCount, 10));
-            timelineSessionsDataPrior.push(newArray);
+            var newPriorSessionArray = [];
+            newPriorSessionArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newPriorSessionArray.push(parseInt(obj.sessionsCount, 10));
+            timelineSessionsDataPrior.push(newPriorSessionArray);
           });
           break;
         case 1:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.sessionsCount, 10));
-            timelineSessionsData.push(newArray);
+            var newSessionArray = [];
+            newSessionArray.push(moment(obj[context]).unix() * 1000);
+            newSessionArray.push(parseInt(obj.sessionsCount, 10));
+            timelineSessionsData.push(newSessionArray);
           });
           break;
       }
@@ -893,18 +896,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       switch (index) {
         case 0:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.count, 10));
-            timelineScreenViewsDataPrior.push(newArray);
+            var newPriorScreenArray = [];
+            newPriorScreenArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newPriorScreenArray.push(parseInt(obj.count, 10));
+            timelineScreenViewsDataPrior.push(newPriorScreenArray);
           });
           break;
         case 1:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.count, 10));
-            timelineScreenViewsData.push(newArray);
+            var newScreenArray = [];
+            newScreenArray.push(moment(obj[context]).unix() * 1000);
+            newScreenArray.push(parseInt(obj.count, 10));
+            timelineScreenViewsData.push(newScreenArray);
           });
           break;
       }
@@ -923,18 +926,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       switch (index) {
         case 0:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.count, 10));
-            timelineInteractionsDataPrior.push(newArray);
+            var newPriorInteractionsArray = [];
+            newPriorInteractionsArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newPriorInteractionsArray.push(parseInt(obj.count, 10));
+            timelineInteractionsDataPrior.push(newPriorInteractionsArray);
           });
           break;
         case 1:
           period.data.forEach(function(obj) {
-            var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.count, 10));
-            timelineInteractionsData.push(newArray);
+            var newInteractionsArray = [];
+            newInteractionsArray.push(moment(obj[context]).unix() * 1000);
+            newInteractionsArray.push(parseInt(obj.count, 10));
+            timelineInteractionsData.push(newInteractionsArray);
           });
           break;
       }
