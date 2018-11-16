@@ -834,7 +834,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.uniqueDeviceTracking, 10));
+            newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
             timelineActiveDevicesDataPrior.push(newArray);
           });
           break;
@@ -842,7 +842,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.uniqueDeviceTracking, 10));
+            newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
             timelineActiveDevicesData.push(newArray);
           });
           break;
@@ -864,7 +864,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.sessionsCount, 10));
+            newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
             timelineSessionsDataPrior.push(newArray);
           });
           break;
@@ -872,7 +872,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.sessionsCount, 10));
+            newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
             timelineSessionsData.push(newArray);
           });
           break;
@@ -894,7 +894,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.count, 10));
+            newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
             timelineScreenViewsDataPrior.push(newArray);
           });
           break;
@@ -902,7 +902,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.count, 10));
+            newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
             timelineScreenViewsData.push(newArray);
           });
           break;
@@ -924,7 +924,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
-            newArray.push(parseInt(obj.count, 10));
+            newArray.push(parseInt(obj.totalEvents || obj.count, 10));
             timelineInteractionsDataPrior.push(newArray);
           });
           break;
@@ -932,7 +932,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           period.data.forEach(function(obj) {
             var newArray = [];
             newArray.push(moment(obj[context]).unix() * 1000);
-            newArray.push(parseInt(obj.count, 10));
+            newArray.push(parseInt(obj.totalEvents || obj.count, 10));
             timelineInteractionsData.push(newArray);
           });
           break;
@@ -1085,6 +1085,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function getTimelineData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
     var periodDurationInSeconds = (currentPeriodEndDate - currentPeriodStartDate);
+    var useLiveData = moment().diff(moment(priorPeriodStartDate), 'hours') <= 48;
+
+    if (!useLiveData) {
+      return Fliplet.App.Analytics.Aggregate.get({
+        period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
+        from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
+        to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+      }).then(function (logs) {
+        // Simulate 4 requests like the other live analytics APIs above
+        return [logs, logs, logs, logs];
+      });
+    }
+
     // timeline of active devices
     var timelineDevices = Fliplet.App.Analytics.get({
       group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
