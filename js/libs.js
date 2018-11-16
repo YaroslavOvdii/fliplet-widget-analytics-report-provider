@@ -328,6 +328,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   };
 
   function startLoading() {
+    setLoadingProgress();
     $('.loading-state').removeClass('hidden');
     $('.app-analytics-container').addClass('hidden');
   }
@@ -335,6 +336,21 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function stopLoading() {
     $('.app-analytics-container').removeClass('hidden');
     $('.loading-state').addClass('hidden');
+  }
+
+  var progress = 0;
+  function setLoadingProgress(progressUpdate) {
+    if (!progressUpdate) {
+      progress = 0;
+    } else {
+      progress += progressUpdate;
+
+      if (progress > 100) {
+        progress = 100;
+      }
+    }
+
+    $('.progress-text span').html(progress.toString());
   }
 
   function registerHandlebarsHelpers() {
@@ -1106,7 +1122,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
     }
 
-    return Promise.all([metricDevices, metricNewDevices, metricSessions, metricScreenViews, metricInteractions]);
+    return Promise.all([metricDevices, metricNewDevices, metricSessions, metricScreenViews, metricInteractions]).then(function (results) {
+      setLoadingProgress(25);
+      return results;
+    });
   }
 
   function getTimelineData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
@@ -1193,7 +1212,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       }
     })
 
-    return Promise.all([timelineDevices, timelineSessions, timelineScreenViews, timelineInteractions]);
+    return Promise.all([timelineDevices, timelineSessions, timelineScreenViews, timelineInteractions]).then(function (results) {
+      setLoadingProgress(25);
+      return results;
+    });
   }
 
   function getActiveUserData(currentPeriodStartDate, currentPeriodEndDate, limit) {
@@ -1224,7 +1246,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
     });
 
-    return Promise.all([userTableSessions, userTableScreenViews, userTableInteractions]);
+    return Promise.all([userTableSessions, userTableScreenViews, userTableInteractions]).then(function (results) {
+      setLoadingProgress(25);
+      return results;
+    });
   }
 
   function getPopularScreenData(currentPeriodStartDate, currentPeriodEndDate, limit) {
@@ -1255,7 +1280,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
     });
 
-    return Promise.all([screenTableScreenViews, screenTableSessions, screenTableScreenInteractions]);
+    return Promise.all([screenTableScreenViews, screenTableSessions, screenTableScreenInteractions]).then(function (results) {
+      setLoadingProgress(25);
+      return results;
+    });
   }
 
   function getUserActionData() {
