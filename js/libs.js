@@ -635,25 +635,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .then(function(analyticsDataArray) {
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
+          stopLoading();
+          Fliplet.Widget.autosize();
+        }
+
+        // Read live data in background
+        Promise.all([
+          getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
+          getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
+          getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
+          getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
+        ]).then(function(data) {
+          var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
+          prepareDataToRender(data, periodDurationInSeconds, 'hour');
 
           stopLoading();
           Fliplet.Widget.autosize();
-        } else {
-          Promise.all([
-            getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
-            getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
-            getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
-            getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
-          ]).then(function(data) {
-            var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
-            prepareDataToRender(data, periodDurationInSeconds, 'hour');
-
-            stopLoading();
-            Fliplet.Widget.autosize();
-          }).catch(function(error) {
-            console.error(error)
-          });
-        }
+        }).catch(function(error) {
+          console.error(error)
+        });
       });
   }
 
