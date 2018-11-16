@@ -20,6 +20,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var timelineInteractionsDataPrior = [];
   var timelineInteractionsData = [];
   var timelineChart = timelineChart || {};
+  var appId = Fliplet.Env.get('appId');
 
   var actionsPerUserTable;
   var actionsPerScreenTable;
@@ -603,16 +604,14 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       ped: analyticsPrevEndDate,
     };
 
-    Fliplet.App.Storage.set({
-      'analyticsDateTime': pvDateTimeObject,
-      'analyticsDataArray': pvDataArray
-    });
+    Fliplet.Storage.set('analytics-' + appId + '-dateTime', pvDateTimeObject);
+    Fliplet.Storage.set('analytics-' + appId + '-dataArray', pvDataArray);
   }
 
   function getDataFromPersistantVariable() {
 
     // get dates and times
-    Fliplet.App.Storage.get('analyticsDateTime')
+    Fliplet.Storage.get('analytics-' + appId + '-dateTime')
       .then(function(analyticsDateTime) {
         if (analyticsDateTime) {
           pvDateTimeObject = analyticsDateTime;
@@ -632,7 +631,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         };
       });
 
-    Fliplet.App.Storage.get('analyticsDataArray')
+    Fliplet.Storage.get('analytics-' + appId + '-dataArray')
       .then(function(analyticsDataArray) {
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
