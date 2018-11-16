@@ -39,11 +39,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'User email',
-          value: '_userEmail'
+          value: 'userEmail'
         },
         {
           key: 'Sessions',
-          value: 'sessionsCount'
+          value: 'count'
         }
       ],
       tableSelector: '.active-users-full-table-sessions',
@@ -55,14 +55,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-screen-views',
       otherTableTwo: 'users-clicks',
       selectorsToHide: '.active-users-full-table-views, .active-users-full-table-clicks',
-      selectorsToShow: '.active-users-full-table-sessions'
+      selectorsToShow: '.active-users-full-table-sessions',
+      order: [[1, 'desc']]
     },
     'users-screen-views': {
       dataIndex: 1,
       tableRows: [
         {
           key: 'User email',
-          value: '_userEmail'
+          value: 'userEmail'
         },
         {
           key: 'Screen views',
@@ -78,14 +79,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-clicks',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-clicks',
-      selectorsToShow: '.active-users-full-table-views'
+      selectorsToShow: '.active-users-full-table-views',
+      order: [[1, 'desc']]
     },
     'users-clicks': {
       dataIndex: 2,
       tableRows: [
         {
           key: 'User email',
-          value: '_userEmail'
+          value: 'userEmail'
         },
         {
           key: 'Clicks',
@@ -101,14 +103,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-screen-views',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-views',
-      selectorsToShow: '.active-users-full-table-clicks'
+      selectorsToShow: '.active-users-full-table-clicks',
+      order: [[1, 'desc']]
     },
     'screens-screen-views': {
       dataIndex: 0,
       tableRows: [
         {
           key: 'Screen name',
-          value: '_pageTitle'
+          value: 'pageTitle'
         },
         {
           key: 'Screen views',
@@ -124,18 +127,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-clicks',
       selectorsToHide: '.popular-sessions-full-table-sessions, .popular-sessions-full-table-clicks',
-      selectorsToShow: '.popular-sessions-full-table-views'
+      selectorsToShow: '.popular-sessions-full-table-views',
+      order: [[1, 'desc']]
     },
     'screens-sessions': {
       dataIndex: 1,
       tableRows: [
         {
           key: 'Screen name',
-          value: '_pageTitle'
+          value: 'pageTitle'
         },
         {
           key: 'Sessions',
-          value: 'sessionsCount'
+          value: 'count'
         }
       ],
       tableSelector: '.popular-sessions-full-table-sessions',
@@ -147,14 +151,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-screen-views',
       otherTableTwo: 'screens-clicks',
       selectorsToHide: '.popular-sessions-full-table-views, .popular-sessions-full-table-clicks',
-      selectorsToShow: '.popular-sessions-full-table-sessions'
+      selectorsToShow: '.popular-sessions-full-table-sessions',
+      order: [[1, 'desc']]
     },
     'screens-clicks': {
       dataIndex: 2,
       tableRows: [
         {
           key: 'Screen name',
-          value: '_pageTitle'
+          value: 'pageTitle'
         },
         {
           key: 'Clicks',
@@ -170,7 +175,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-screen-views',
       selectorsToHide: '.popular-sessions-full-table-views, .popular-sessions-full-table-sessions',
-      selectorsToShow: '.popular-sessions-full-table-clicks'
+      selectorsToShow: '.popular-sessions-full-table-clicks',
+      order: [[1, 'desc']]
     }
   };
 
@@ -364,13 +370,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       // if start date exists check end date is after start date
       if (typeof $('.pickerEndDate').data('datepicker').dates[0] === 'undefined') {
         $('.custom-start-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else if ($('.pickerEndDate').data('datepicker').dates[0] < $('.pickerStartDate').data('datepicker').dates[0]) {
         $('.custom-dates-inputs').css({
           height: 'auto'
         });
         $('.custom-start-date-alert').addClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else {
         $('.custom-start-date-alert, .custom-end-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', false);
       }
     });
     // custom dates end-date validation
@@ -378,13 +387,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       // if start date exists check end date is after start date
       if (typeof $container.find('.pickerStartDate').data('datepicker').dates[0] === 'undefined') {
         $container.find('.custom-end-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else if ($container.find('.pickerEndDate').data('datepicker').dates[0] < $container.find('.pickerStartDate').data('datepicker').dates[0]) {
         $container.find('.custom-dates-inputs').css({
           height: 'auto'
         });
         $container.find('.custom-end-date-alert').addClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else {
         $container.find('.custom-end-date-alert, .custom-start-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', false);
       }
 
     });
@@ -393,11 +405,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.date-picker-option', function(event) {
         var value = $('.date-picker-option:checked').val();
         if (value == 'custom-dates') {
+          $container.find('.apply-button').prop('disabled', true);
           var targetHeight = $(this).parents('.date-picker').find('.custom-dates-hidden-content').outerHeight();
           $(this).parents('.date-picker').find('.custom-dates-inputs').animate({
             height: targetHeight
           }, 150);
         } else {
+          $container.find('.apply-button').prop('disabled', false);
           $(this).parents('.date-picker').find('.custom-dates-inputs').animate({
             height: 0
           }, 150);
@@ -784,18 +798,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           break;
         case 2:
           newObj['Title'] = 'Sessions';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
         case 3:
           newObj['Title'] = 'Screen views';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
         case 4:
           newObj['Title'] = 'Interactions';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
       }
       appMetricsArrayData.push(newObj);
@@ -1361,6 +1375,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         buttons: [
           'excel'
         ],
+        order: configTableContext[context].order,
         responsive: {
           details: {
             display: $.fn.dataTable.Responsive.display.childRow
