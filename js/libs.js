@@ -1025,8 +1025,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       }
     });
 
-    // Get count of sessions
     var metricSessions;
+    var metricScreenViews;
+    var metricInteractions;
 
     if (groupBy === 'hour') {
       metricSessions = Fliplet.App.Analytics.get({
@@ -1047,7 +1048,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
 
       // Get count of screen views
-      var metricScreenViews = Fliplet.App.Analytics.get({
+      metricScreenViews = Fliplet.App.Analytics.get({
         group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
         where: {
           type: 'app.analytics.pageView',
@@ -1064,7 +1065,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       })
 
       // Get count of interactions
-      var metricInteractions = Fliplet.App.Analytics.get({
+      metricInteractions = Fliplet.App.Analytics.get({
         group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
         where: {
           type: 'app.analytics.event',
