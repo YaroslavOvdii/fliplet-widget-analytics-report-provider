@@ -1190,54 +1190,32 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getPopularScreenData(currentPeriodStartDate, currentPeriodEndDate, limit) {
-    var screenTableScreenViews = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.pageView',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
-    })
+    var screenTableScreenViews = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'totalPageViews',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
-    var screenTableSessions = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      attributes: [{ distinctCount: true, col: 'data._analyticsSessionId', as: 'sessionsCount' }],
-      order: [
-        ['sessionsCount', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.pageView',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        }
-      },
-      limit: limit
-    })
+    var screenTableSessions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'uniqueSessions',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
-    var screenTableScreenInteractions = Fliplet.App.Analytics.get({
-      group: ['data._pageId'],
-      order: [
-        ['count', 'DESC']
-      ],
-      where: {
-        type: 'app.analytics.event',
-        createdAt: {
-          $gte: moment(currentPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
-        },
-        data: {
-          nonInteractive: null
-        }
-      },
-      limit: limit
-    })
+    var screenTableScreenInteractions = Fliplet.App.Analytics.Aggregate.get({
+      group: 'page',
+      sum: 'totalEvents',
+      order: [['count', 'DESC']],
+      limit: limit,
+      from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
+      to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+    });
 
     return Promise.all([screenTableScreenViews, screenTableSessions, screenTableScreenInteractions]);
   }
@@ -1457,7 +1435,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     chartInitialization(chartContainer, getChartConfig());
 
     // Run once on load
-    getDataFromPersistantVariable();    
+    getDataFromPersistantVariable();
   }
 
   start();
