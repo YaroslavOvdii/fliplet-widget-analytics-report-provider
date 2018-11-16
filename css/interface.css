@@ -296,7 +296,7 @@ span.analytics-box-number-prior {
 
 .full-screen-overlay-header .header-controls {
   display: flex;
-  align-items: center;  
+  align-items: center;
 }
 
 .header-controls .close-button {
@@ -558,4 +558,9 @@ span.analytics-box-number-prior {
 
 .app-analytics-container .dt-button-background {
   display: none !important;
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 10px;
 }
