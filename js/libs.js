@@ -183,107 +183,99 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   var chartContainer = $container.find('.chart-holder')[0];
   var chartConfig = {
-    'title': {
-      'text': '',
-      'style': {
-        'fontSize': '18px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      }
-    },
-    'subtitle': {
-      'text': '',
-      'style': {
-        'fontSize': '18px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      }
-    },
-    'exporting': {
-      'enabled': false
-    },
-    'series': [{
-      'data': [],
-      'name': 'Prior period',
-      'marker': {
-        'symbol': 'circle'
+    chart: {
+      type: 'areaspline',
+      style: {
+        fontSize: '12px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
       },
-      'type': 'areaspline',
-      'fillColor': 'rgba(182,189,204,0.2)',
-      'color': '#b6bdcc',
-      'label': {
-        'enabled': false
+      backgroundColor: '#f4f2f7',
+      spacingLeft: 0,
+      spacingRight: 0,
+      spacingBottom: 0,
+      spacingTop: 5
+    },
+    title: {
+      text: '',
+      style: {
+        fontSize: '18px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      }
+    },
+    subtitle: {
+      text: '',
+      style: {
+        fontSize: '18px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      }
+    },
+    exporting: {
+      enabled: false
+    },
+    series: [{
+      data: [],
+      name: 'Prior period',
+      marker: {
+        symbol: 'circle'
+      },
+      type: 'areaspline',
+      fillColor: 'rgba(182,189,204,0.2)',
+      color: '#b6bdcc',
+      label: {
+        enabled: false
       }
     }, {
-      'data': [],
-      'name': 'Current period',
-      'marker': {
-        'symbol': 'circle'
+      data: [],
+      name: 'Current period',
+      marker: {
+        symbol: 'circle'
       },
-      'type': 'areaspline',
-      'color': '#43ccf0',
-      'fillColor': 'rgba(67,204,240,0.4)',
-      'label': {
-        'enabled': false,
-        'connectorAllowed': false
+      type: 'areaspline',
+      color: '#43ccf0',
+      fillColor: 'rgba(67,204,240,0.4)',
+      label: {
+        enabled: false,
+        connectorAllowed: false
       }
     }],
-    'plotOptions': {
-      'series': {
-        'dataLabels': {
-          'enabled': false
+    plotOptions: {
+      series: {
+        dataLabels: {
+          enabled: false
         }
       }
     },
-    'yAxis': [{
-      'title': {
-        'text': '',
-        'style': {
-          'fontSize': '18px',
-          'fontWeight': 'normal',
-          'fontStyle': 'normal'
+    yAxis: [{
+      title: {
+        text: '',
+        style: {
+          fontSize: '18px',
+          fontWeight: 'normal',
+          fontStyle: 'normal'
         }
       },
-      'offset': -10,
-      'lineColor': '#f4f2f7'
+      lineColor: '#f4f2f7'
     }],
-    'credits': {
-      'enabled': false,
-      'text': '',
-      'href': ''
-    },
-    'lang': {
-      'thousandsSep': ' ,'
-    },
-    'chart': {
-      'style': {
-        'fontSize': '12px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      },
-      'backgroundColor': '#f4f2f7',
-      'spacingLeft': -10,
-      'spacingRight': 0,
-      'spacingBottom': 0,
-      'spacingTop': 5
-    },
-    'xAxis': [{
-      'title': {
-        'style': {
-          'fontSize': '18px',
-          'fontWeight': 'normal',
-          'fontStyle': 'normal'
+    xAxis: [{
+      title: {
+        style: {
+          fontSize: '18px',
+          fontWeight: 'normal',
+          fontStyle: 'normal'
         }
       },
-      'type': 'datetime',
-      'alignTicks': false,
-      'allowDecimals': false,
-      'minorTickLength': 0,
-      'tickLength': 5,
-      'lineColor': '#f4f2f7'
+      type: 'datetime',
+      alignTicks: false,
+      allowDecimals: false,
+      minorTickLength: 0,
+      tickLength: 5,
+      lineColor: '#f4f2f7'
     }],
-    'tooltip': {
-      'borderWidth': 0,
+    tooltip: {
+      borderWidth: 0,
       formatter: function() {
         var text = '';
         var momentTime;
@@ -321,16 +313,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         return text;
       }
     },
-    'pane': {
-      'background': []
+    pane: {
+      background: []
     },
-    'responsive': {
-      'rules': []
-    },
-    'legend': {
-      'itemStyle': {
-        'fontWeight': '500'
+    legend: {
+      itemStyle: {
+        fontWeight: '500'
       },
+    },
+    credits: {
+      enabled: false
+    },
+    lang: {
+      thousandsSep: ' ,'
     }
   };
 
