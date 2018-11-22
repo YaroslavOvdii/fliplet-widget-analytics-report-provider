@@ -20,6 +20,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var timelineInteractionsDataPrior = [];
   var timelineInteractionsData = [];
   var timelineChart = timelineChart || {};
+  var chartEmptyData = [[], []];
   var appId = Fliplet.Env.get('appId');
 
   var actionsPerUserTable;
@@ -55,7 +56,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-screen-views',
       otherTableTwo: 'users-clicks',
       selectorsToHide: '.active-users-full-table-views, .active-users-full-table-clicks',
-      selectorsToShow: '.active-users-full-table-sessions'
+      selectorsToShow: '.active-users-full-table-sessions',
+      order: [[1, 'desc']]
     },
     'users-screen-views': {
       dataIndex: 1,
@@ -78,7 +80,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-clicks',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-clicks',
-      selectorsToShow: '.active-users-full-table-views'
+      selectorsToShow: '.active-users-full-table-views',
+      order: [[1, 'desc']]
     },
     'users-clicks': {
       dataIndex: 2,
@@ -101,7 +104,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-screen-views',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-views',
-      selectorsToShow: '.active-users-full-table-clicks'
+      selectorsToShow: '.active-users-full-table-clicks',
+      order: [[1, 'desc']]
     },
     'screens-screen-views': {
       dataIndex: 0,
@@ -124,7 +128,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-clicks',
       selectorsToHide: '.popular-sessions-full-table-sessions, .popular-sessions-full-table-clicks',
-      selectorsToShow: '.popular-sessions-full-table-views'
+      selectorsToShow: '.popular-sessions-full-table-views',
+      order: [[1, 'desc']]
     },
     'screens-sessions': {
       dataIndex: 1,
@@ -147,7 +152,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-screen-views',
       otherTableTwo: 'screens-clicks',
       selectorsToHide: '.popular-sessions-full-table-views, .popular-sessions-full-table-clicks',
-      selectorsToShow: '.popular-sessions-full-table-sessions'
+      selectorsToShow: '.popular-sessions-full-table-sessions',
+      order: [[1, 'desc']]
     },
     'screens-clicks': {
       dataIndex: 2,
@@ -170,113 +176,106 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-screen-views',
       selectorsToHide: '.popular-sessions-full-table-views, .popular-sessions-full-table-sessions',
-      selectorsToShow: '.popular-sessions-full-table-clicks'
+      selectorsToShow: '.popular-sessions-full-table-clicks',
+      order: [[1, 'desc']]
     }
   };
 
   var chartContainer = $container.find('.chart-holder')[0];
   var chartConfig = {
-    'title': {
-      'text': '',
-      'style': {
-        'fontSize': '18px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      }
-    },
-    'subtitle': {
-      'text': '',
-      'style': {
-        'fontSize': '18px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      }
-    },
-    'exporting': {
-      'enabled': false
-    },
-    'series': [{
-      'data': [],
-      'name': 'Prior period',
-      'marker': {
-        'symbol': 'circle'
+    chart: {
+      type: 'areaspline',
+      style: {
+        fontSize: '12px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
       },
-      'type': 'areaspline',
-      'fillColor': 'rgba(182,189,204,0.2)',
-      'color': '#b6bdcc',
-      'label': {
-        'enabled': false
+      backgroundColor: '#f4f2f7',
+      spacingLeft: 0,
+      spacingRight: 0,
+      spacingBottom: 0,
+      spacingTop: 5
+    },
+    title: {
+      text: '',
+      style: {
+        fontSize: '18px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      }
+    },
+    subtitle: {
+      text: '',
+      style: {
+        fontSize: '18px',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      }
+    },
+    exporting: {
+      enabled: false
+    },
+    series: [{
+      data: [],
+      name: 'Prior period',
+      marker: {
+        symbol: 'circle'
+      },
+      type: 'areaspline',
+      fillColor: 'rgba(182,189,204,0.2)',
+      color: '#b6bdcc',
+      label: {
+        enabled: false
       }
     }, {
-      'data': [],
-      'name': 'Current period',
-      'marker': {
-        'symbol': 'circle'
+      data: [],
+      name: 'Current period',
+      marker: {
+        symbol: 'circle'
       },
-      'type': 'areaspline',
-      'color': '#43ccf0',
-      'fillColor': 'rgba(67,204,240,0.4)',
-      'label': {
-        'enabled': false,
-        'connectorAllowed': false
+      type: 'areaspline',
+      color: '#43ccf0',
+      fillColor: 'rgba(67,204,240,0.4)',
+      label: {
+        enabled: false,
+        connectorAllowed: false
       }
     }],
-    'plotOptions': {
-      'series': {
-        'dataLabels': {
-          'enabled': false
+    plotOptions: {
+      series: {
+        dataLabels: {
+          enabled: false
         }
       }
     },
-    'yAxis': [{
-      'title': {
-        'text': '',
-        'style': {
-          'fontSize': '18px',
-          'fontWeight': 'normal',
-          'fontStyle': 'normal'
+    yAxis: [{
+      title: {
+        text: '',
+        style: {
+          fontSize: '18px',
+          fontWeight: 'normal',
+          fontStyle: 'normal'
         }
       },
-      'offset': -10,
-      'lineColor': '#f4f2f7'
+      lineColor: '#f4f2f7'
     }],
-    'credits': {
-      'enabled': false,
-      'text': '',
-      'href': ''
-    },
-    'lang': {
-      'thousandsSep': ' ,'
-    },
-    'chart': {
-      'style': {
-        'fontSize': '12px',
-        'fontWeight': 'normal',
-        'fontStyle': 'normal'
-      },
-      'backgroundColor': '#f4f2f7',
-      'spacingLeft': -10,
-      'spacingRight': 0,
-      'spacingBottom': 0,
-      'spacingTop': 5
-    },
-    'xAxis': [{
-      'title': {
-        'style': {
-          'fontSize': '18px',
-          'fontWeight': 'normal',
-          'fontStyle': 'normal'
+    xAxis: [{
+      title: {
+        style: {
+          fontSize: '18px',
+          fontWeight: 'normal',
+          fontStyle: 'normal'
         }
       },
-      'type': 'datetime',
-      'alignTicks': false,
-      'allowDecimals': false,
-      'minorTickLength': 0,
-      'tickLength': 5,
-      'lineColor': '#f4f2f7'
+      type: 'datetime',
+      alignTicks: false,
+      allowDecimals: false,
+      minorTickLength: 0,
+      tickLength: 5,
+      lineColor: '#f4f2f7'
     }],
-    'tooltip': {
-      'borderWidth': 0,
+    tooltip: {
+      borderWidth: 0,
       formatter: function() {
         var text = '';
         var momentTime;
@@ -314,16 +313,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         return text;
       }
     },
-    'pane': {
-      'background': []
+    pane: {
+      background: []
     },
-    'responsive': {
-      'rules': []
-    },
-    'legend': {
-      'itemStyle': {
-        'fontWeight': '500'
+    legend: {
+      itemStyle: {
+        fontWeight: '500'
       },
+    },
+    credits: {
+      enabled: false
+    },
+    lang: {
+      thousandsSep: ' ,'
     }
   };
 
@@ -383,13 +385,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       // if start date exists check end date is after start date
       if (typeof $('.pickerEndDate').data('datepicker').dates[0] === 'undefined') {
         $('.custom-start-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else if ($('.pickerEndDate').data('datepicker').dates[0] < $('.pickerStartDate').data('datepicker').dates[0]) {
         $('.custom-dates-inputs').css({
           height: 'auto'
         });
         $('.custom-start-date-alert').addClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else {
         $('.custom-start-date-alert, .custom-end-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', false);
       }
     });
     // custom dates end-date validation
@@ -397,13 +402,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       // if start date exists check end date is after start date
       if (typeof $container.find('.pickerStartDate').data('datepicker').dates[0] === 'undefined') {
         $container.find('.custom-end-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else if ($container.find('.pickerEndDate').data('datepicker').dates[0] < $container.find('.pickerStartDate').data('datepicker').dates[0]) {
         $container.find('.custom-dates-inputs').css({
           height: 'auto'
         });
         $container.find('.custom-end-date-alert').addClass('active');
+        $container.find('.apply-button').prop('disabled', true);
       } else {
         $container.find('.custom-end-date-alert, .custom-start-date-alert').removeClass('active');
+        $container.find('.apply-button').prop('disabled', false);
       }
 
     });
@@ -412,11 +420,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.date-picker-option', function(event) {
         var value = $('.date-picker-option:checked').val();
         if (value == 'custom-dates') {
+          $container.find('.apply-button').prop('disabled', true);
           var targetHeight = $(this).parents('.date-picker').find('.custom-dates-hidden-content').outerHeight();
           $(this).parents('.date-picker').find('.custom-dates-inputs').animate({
             height: targetHeight
           }, 150);
         } else {
+          $container.find('.apply-button').prop('disabled', false);
           $(this).parents('.date-picker').find('.custom-dates-inputs').animate({
             height: 0
           }, 150);
@@ -605,6 +615,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function chartInitialization(element, options) {
     timelineChart[configuration.id] = Highcharts.chart(element, options);
+    getChart().series[0].setData(chartEmptyData);
+    getChart().series[1].setData(chartEmptyData);
   }
 
   function closeOverlay() {
@@ -799,18 +811,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           break;
         case 2:
           newObj['Title'] = 'Sessions';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
         case 3:
           newObj['Title'] = 'Screen views';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
         case 4:
           newObj['Title'] = 'Interactions';
-          newObj['Prior period'] = arr[0].count;
-          newObj['Selected period'] = arr[1].count;
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
           break;
       }
       appMetricsArrayData.push(newObj);
@@ -1439,6 +1451,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         buttons: [
           'excel'
         ],
+        order: configTableContext[context].order,
         responsive: {
           details: {
             display: $.fn.dataTable.Responsive.display.childRow
