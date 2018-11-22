@@ -351,6 +351,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     }
 
     $('.progress-bar').attr('aria-valuenow', progress.toString());
+    $('.progress-bar').css({
+      width: progress.toString() + '%'
+    });
   }
 
   function registerHandlebarsHelpers() {
