@@ -568,8 +568,7 @@ span.analytics-box-number-prior {
   top: -100px;
   left: 0;
   right: 0;
-  border-top: 1px solid #d9ddde;
-  background-color: #f2f6f7;
+  background-color: #fff;
   padding: 15px;
   z-index: 1;
 }
