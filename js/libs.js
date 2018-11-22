@@ -40,11 +40,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'User email',
-          value: 'userEmail'
+          value: ['_userEmail', 'userEmail']
         },
         {
           key: 'Sessions',
-          value: 'count'
+          value: ['sessionsCount', 'uniqueSessions', 'count']
         }
       ],
       tableSelector: '.active-users-full-table-sessions',
@@ -64,11 +64,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'User email',
-          value: 'userEmail'
+          value: ['_userEmail', 'userEmail']
         },
         {
           key: 'Screen views',
-          value: 'count'
+          value: ['count', 'totalPageViews']
         }
       ],
       tableSelector: '.active-users-full-table-views',
@@ -88,11 +88,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'User email',
-          value: 'userEmail'
+          value: ['_userEmail', 'userEmail']
         },
         {
           key: 'Clicks',
-          value: 'count'
+          value: ['count', 'totalEvents']
         }
       ],
       tableSelector: '.active-users-full-table-clicks',
@@ -112,11 +112,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'Screen name',
-          value: 'pageTitle'
+          value: ['_pageTitle', 'pageTitle']
         },
         {
           key: 'Screen views',
-          value: 'count'
+          value: ['count', 'totalPageViews']
         }
       ],
       tableSelector: '.popular-sessions-full-table-views',
@@ -136,11 +136,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'Screen name',
-          value: 'pageTitle'
+          value: ['_pageTitle', 'pageTitle']
         },
         {
           key: 'Sessions',
-          value: 'count'
+          value: ['sessionsCount', 'uniqueSessions', 'count']
         }
       ],
       tableSelector: '.popular-sessions-full-table-sessions',
@@ -160,11 +160,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableRows: [
         {
           key: 'Screen name',
-          value: 'pageTitle'
+          value: ['_pageTitle', 'pageTitle']
         },
         {
           key: 'Clicks',
-          value: 'count'
+          value: ['count', 'totalEvents']
         }
       ],
       tableSelector: '.popular-sessions-full-table-clicks',
@@ -331,13 +331,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function startLoading() {
     setLoadingProgress();
-    $('.loading-state').removeClass('hidden');
-    $('.app-analytics-container').addClass('hidden');
+    $('.widget-holder').addClass('is-loading');
   }
 
   function stopLoading() {
-    $('.app-analytics-container').removeClass('hidden');
-    $('.loading-state').addClass('hidden');
+    setTimeout(function () {
+      $('.widget-holder').removeClass('is-loading');
+    }, 500);
   }
 
   var progress = 0;
@@ -352,7 +352,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       }
     }
 
-    $('.progress-text span').html(progress.toString());
+    $('.progress-bar').attr('aria-valuenow', progress.toString());
+    $('.progress-bar').css({
+      width: progress.toString() + '%'
+    });
   }
 
   function registerHandlebarsHelpers() {
@@ -1420,8 +1423,20 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     tableDataArray = [];
     data[configTableContext[context].dataIndex].forEach(function(row) {
       var newObj = {};
-      newObj[configTableContext[context].tableRows[0].key] = row[configTableContext[context].tableRows[0].value] || null;
-      newObj[configTableContext[context].tableRows[1].key] = row[configTableContext[context].tableRows[1].value] || null;
+
+      [0, 1].forEach(function (idx) {
+        var fieldKey = configTableContext[context].tableRows[idx].key;
+        var values = configTableContext[context].tableRows[idx].value;
+
+        if (!Array.isArray(values)) {
+          values = [values];
+        }
+
+        configTableContext[context].tableRows[idx].value.forEach(function (val) {
+          newObj[fieldKey] = newObj[fieldKey] || row[val] || null;
+        });
+      });
+
       tableDataArray.push(newObj);
     });
     if (configTableContext[context].table) {
