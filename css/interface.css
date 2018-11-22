@@ -565,7 +565,7 @@ span.analytics-box-number-prior {
   transition: bottom 0.5s;
   pointer-events: none;
   position: fixed;
-  bottom: -100px;
+  top: -100px;
   left: 0;
   right: 0;
   border-top: 1px solid #d9ddde;
@@ -589,7 +589,7 @@ span.analytics-box-number-prior {
 }
 
 .is-loading .loader {
-  bottom: 0;
+  top: 0;
 }
 
 .is-loading .app-analytics-container {
