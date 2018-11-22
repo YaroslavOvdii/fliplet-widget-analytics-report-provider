@@ -43,7 +43,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         },
         {
           key: 'Sessions',
-          value: ['sessionsCount', 'uniqueSessions']
+          value: ['sessionsCount', 'uniqueSessions', 'count']
         }
       ],
       tableSelector: '.active-users-full-table-sessions',
@@ -135,7 +135,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         },
         {
           key: 'Sessions',
-          value: ['sessionsCount', 'uniqueSessions']
+          value: ['sessionsCount', 'uniqueSessions', 'count']
         }
       ],
       tableSelector: '.popular-sessions-full-table-sessions',
