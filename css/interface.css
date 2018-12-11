@@ -18,7 +18,7 @@ body {
 
 .app-analytics-container {
   position: relative;
-  transition: opacity 0.5s;
+  transition: opacity 0.25s;
 }
 
 /* TOP HEADER BAR */
@@ -562,13 +562,12 @@ span.analytics-box-number-prior {
 }
 
 .loader {
-  transition: bottom 0.5s;
+  transition: bottom 0.25s;
   pointer-events: none;
   position: fixed;
   top: -100px;
   left: 0;
   right: 0;
-  background-color: #fff;
   padding: 15px;
   z-index: 1;
 }
@@ -579,12 +578,15 @@ span.analytics-box-number-prior {
   color: #333;
 }
 
-.progress {
+.loader .progress {
   margin: 0;
+  height: 8px;
+  box-shadow: none;
 }
 
 .loader .progress-bar {
   background-color: #00abd1;
+  box-shadow: none;
 }
 
 .is-loading .loader {
@@ -592,7 +594,6 @@ span.analytics-box-number-prior {
 }
 
 .is-loading .app-analytics-container {
-  opacity: 0.3;
+  opacity: 0;
   pointer-events: none;
-  cursor: wait;
 }
