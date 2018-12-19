@@ -360,7 +360,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function registerHandlebarsHelpers() {
     Handlebars.registerHelper('formatNumber', function(num) {
-      if (!num) {
+      if (isNaN(num)) {
         return;
       }
 
