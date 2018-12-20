@@ -672,13 +672,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
         // Read live data in background
         Promise.all([
-          getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
-          getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, 'hour'),
+          getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, analyticsDataArray.context || 'day'),
+          getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, analyticsDataArray.context || 'day'),
           getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
           getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
         ]).then(function(data) {
           var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
-          prepareDataToRender(data, periodDurationInSeconds, 'hour');
+          prepareDataToRender(data, periodDurationInSeconds, analyticsDataArray.context || 'day');
 
           stopLoading();
           Fliplet.Widget.autosize();
