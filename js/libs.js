@@ -664,21 +664,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     Fliplet.Storage.get('analytics-' + appId + '-dataArray')
       .then(function(analyticsDataArray) {
+        var context;
+
         if (analyticsDataArray) {
           prepareDataToRender(analyticsDataArray.data, analyticsDataArray.periodInSeconds, analyticsDataArray.context);
           stopLoading();
           Fliplet.Widget.autosize();
+
+          context = analyticsDataArray.context;
         }
 
         // Read live data in background
         Promise.all([
-          getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, analyticsDataArray.context || 'day'),
-          getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, analyticsDataArray.context || 'day'),
+          getMetricsData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, context || 'day'),
+          getTimelineData(analyticsStartDate, analyticsEndDate, analyticsPrevStartDate, context || 'day'),
           getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
           getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
         ]).then(function(data) {
           var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
-          prepareDataToRender(data, periodDurationInSeconds, analyticsDataArray.context || 'day');
+          prepareDataToRender(data, periodDurationInSeconds, context || 'day');
 
           stopLoading();
           Fliplet.Widget.autosize();
