@@ -1035,14 +1035,14 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     var metricDevices = Fliplet.App.Analytics.Aggregate.count({
       column: 'uniqueDevices',
       from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
-      to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
+      to: moment(currentPeriodStartDate).subtract(1, 'ms').format('YYYY-MM-DD')
     }).then(function(previousPeriod) {
       previousPeriodUsers = previousPeriod;
       // 2. get devices up to end of previous period
       return Fliplet.App.Analytics.Aggregate.count({
         column: 'uniqueDevices',
         from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
-        to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
+        to: moment(currentPeriodEndDate).subtract(1, 'ms').format('YYYY-MM-DD')
       }).then(function(currentPeriod) {
         currentPeriodUsers = currentPeriod
         return;
