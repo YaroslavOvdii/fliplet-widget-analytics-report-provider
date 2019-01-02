@@ -800,16 +800,22 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function normalizeAggregatedData(data, type) {
     var prior = data[0];
     var current = data[1];
-    return [{
-      count: prior.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
-      periodStart: prior.periodStart,
-      periodEnd: prior.periodEnd,
-    },
-    {
-      count: current.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
-      periodStart: current.periodStart,
-      periodEnd: current.periodEnd,
-    }]
+    const aggregatedData = [];
+    if (prior) {
+      aggregatedData.push({
+        count: prior.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
+        periodStart: prior.periodStart,
+        periodEnd: prior.periodEnd,
+      })
+    }
+    if (current) {
+      aggregatedData.push({
+        count: current.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
+        periodStart: current.periodStart,
+        periodEnd: current.periodEnd,
+      })
+    }
+    return aggregatedData;
   }
 
   function renderData(periodInSeconds, context) {
