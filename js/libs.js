@@ -716,25 +716,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function calculateAnalyticsDatesCustom(customStartDate, customEndDate, isCustom, time, timeToGoBack) {
     if (isCustom) {
+      timeToGoBack = moment(customEndDate).diff(moment(customStartDate), 'days');
+      timeDeltaInMillisecs = customEndDate - customStartDate;
+      time = 'days';
       // Set start date
       analyticsStartDate = new Date(customStartDate);
       analyticsStartDate.setHours(0, 0, 0, 0);
+
       // Set end date
       analyticsEndDate = new Date(customEndDate);
-      analyticsEndDate.setDate(analyticsEndDate.getDate() + 1);
       analyticsEndDate.setHours(0, 0, 0, 0);
-      analyticsEndDate.setMilliseconds(analyticsEndDate.getMilliseconds() - 1);
-      // Calculates the difference between end and start dates
-      timeDeltaInMillisecs = analyticsEndDate - analyticsStartDate;
+
       // Set previous period start date
       analyticsPrevStartDate = new Date(analyticsStartDate);
-      analyticsPrevStartDate.setMilliseconds(analyticsEndDate.getMilliseconds() - timeDeltaInMillisecs);
+      analyticsPrevStartDate = moment(analyticsPrevStartDate).subtract(timeToGoBack, time).toDate();
       // Set previous period end date
-      analyticsPrevEndDate = new Date(analyticsStartDate);
-      analyticsPrevEndDate.setMilliseconds(analyticsEndDate.getMilliseconds() - timeDeltaInMillisecs);
-      // Set previous period start date
-      analyticsPrevStartDate = new Date(analyticsStartDate);
-    } else {
+      analyticsPrevEndDate = new Date(analyticsEndDate);
+      analyticsPrevEndDate = moment(analyticsPrevEndDate).subtract(timeToGoBack, time).toDate();
+    }
+    else{
       // Set start date
       analyticsStartDate = new Date(customStartDate);
       analyticsStartDate = moment(analyticsStartDate).subtract(timeToGoBack, time).toDate();
@@ -742,7 +742,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       // Set end date
       analyticsEndDate = new Date(customEndDate);
       analyticsEndDate.setHours(0, 0, 0, 0);
-      analyticsEndDate.setMilliseconds(analyticsEndDate.getMilliseconds() - 1);
+      analyticsEndDate.setMilliseconds(analyticsEndDate.getMilliseconds());
       // Set previous period start date
       analyticsPrevStartDate = new Date(analyticsStartDate);
       analyticsPrevStartDate = moment(analyticsPrevStartDate).subtract(timeToGoBack, time).toDate();
