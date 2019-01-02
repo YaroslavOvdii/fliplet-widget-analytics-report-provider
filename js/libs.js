@@ -797,6 +797,21 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     renderData(periodInSeconds, context)
   }
 
+  function normalizeAggregatedData(data, type) {
+    var prior = data[0];
+    var current = data[1];
+    return [{
+      count: prior.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
+      periodStart: prior.periodStart,
+      periodEnd: prior.periodEnd,
+    },
+    {
+      count: current.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
+      periodStart: current.periodStart,
+      periodEnd: current.periodEnd,
+    }]
+  }
+
   function renderData(periodInSeconds, context) {
     // RENDER APP METRICS
     var appMetricsArrayData = [];
@@ -1124,6 +1139,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'uniqueSessions'
+      }).then(function (results) { 
+        return normalizeAggregatedData(results, 'uniqueSessions')
       });
 
       metricScreenViews = Fliplet.App.Analytics.Aggregate.get({
@@ -1131,13 +1148,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'totalPageViews'
+      }).then(function (results) { 
+        return normalizeAggregatedData(results, 'totalPageViews')
       });
+
 
       metricInteractions = Fliplet.App.Analytics.Aggregate.get({
         period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'totalEvents'
+      }).then(function (results) { 
+        return normalizeAggregatedData(results, 'totalEvents')
       });
     }
 
