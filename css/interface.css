@@ -96,6 +96,10 @@ body {
   cursor: pointer;
 }
 
+.timeframe-disclaimer{
+  font-size: 13px;
+}
+
 .analytics-date-range + .agenda-icon {
   margin-left: 10px;
 }
