@@ -457,7 +457,6 @@ span.analytics-box-number-prior {
 .app-analytics-container table td,
 .app-analytics-container table caption {
   min-width: unset;
-  word-break: break-all;
 }
 
 /***********  Table overlay css  ************/
@@ -476,6 +475,7 @@ span.analytics-box-number-prior {
 .app-analytics-container table.dataTable.hover tbody tr:hover,
 .app-analytics-container table.dataTable.display tbody tr:hover {
   background-color: transparent;
+  word-break: break-all;
 }
 
 .app-analytics-container .dataTables_wrapper .dataTables_paginate .paginate_button.current,

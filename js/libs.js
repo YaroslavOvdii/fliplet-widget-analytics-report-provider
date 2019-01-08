@@ -1359,7 +1359,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       order: orderArray
     })
       .then(function (pageEvents) {
-        var pageEventsByScreen = _.groupBy(pageEvents.rows, 'data._userEmail');
+        var pageEventsByScreen = _.groupBy(pageEvents.logs, 'data._userEmail');
 
         var data = [];
         for (var prop in pageEventsByScreen) {
@@ -1456,7 +1456,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       order: orderArray
     })
       .then(function (pageEvents) {
-        var pageEventsByScreen = _.groupBy(pageEvents.rows, 'data._pageTitle');
+        var pageEventsByScreen = _.groupBy(pageEvents.logs, 'data._pageTitle');
 
         var data = [];
         for (var prop in pageEventsByScreen) {
