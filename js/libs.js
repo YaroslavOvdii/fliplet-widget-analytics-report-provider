@@ -21,6 +21,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var timelineInteractionsData = [];
   var timelineChart = timelineChart || {};
   var chartEmptyData = [[], []];
+  var cachedUserActionData = { data: [] };
+  var cachedScreenActionData = { data: [] };
   var appId = Fliplet.Env.get('appId');
 
   var actionsPerUserTable;
@@ -529,7 +531,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         Fliplet.Studio.emit('overlay-scroll-top', {
           name: 'app-analytics'
         });
-        getUserActionData();
+        renderUserActionsDatatable();
       })
       .on('click', '.more-popular-sessions', function() {
         $container.find('.popular-sessions-overlay').addClass('active');
@@ -545,7 +547,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         Fliplet.Studio.emit('overlay-scroll-top', {
           name: 'app-analytics'
         });
-        getScreenActionData();
+        renderScreenActionsDatatable();
       })
       .on('change', '[name="timeline-selector"]', function() {
         var value = $('[name="timeline-selector"]:checked').val();
@@ -800,7 +802,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function normalizeAggregatedData(data, type) {
     var prior = data[0];
     var current = data[1];
-    const aggregatedData = [];
+    var aggregatedData = [];
     if (prior) {
       aggregatedData.push({
         count: prior.data.map(function (x) { return +x[type] }).reduce(function (a, b) { return a + b }, 0),
@@ -1333,122 +1335,200 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
   }
 
-  function getUserActionData() {
-    Fliplet.App.Analytics.get({
-        where: {
-          createdAt: {
-            $gte: moment(analyticsStartDate).unix() * 1000,
-            $lte: moment(analyticsEndDate).unix() * 1000
-          }
+  function loadUserActionsData(limit, offset, searchClause, orderArray) {
+    var where = {
+      createdAt: {
+        $gte: moment(analyticsStartDate).unix() * 1000,
+        $lte: moment(analyticsEndDate).unix() * 1000
+      },
+      $or: [
+        {
+          type: 'app.analytics.event'
+        },
+        {
+          type: 'app.analytics.pageView'
         }
-      })
-      .then(function(data) {
-        var pageEvents = _.filter(data, function(row) {
-          return row.type === 'app.analytics.event' || row.type === 'app.analytics.pageView';
-        });
+      ]
+    };
+    where = Object.assign(where, searchClause);
 
-        var pageEventsByScreen = _.groupBy(pageEvents, 'data._userEmail');
+    return Fliplet.App.Analytics.get({
+      limit: limit,
+      offset: offset,
+      where: where,
+      order: orderArray
+    })
+      .then(function (pageEvents) {
+        var pageEventsByScreen = _.groupBy(pageEvents.rows, 'data._userEmail');
 
-        var tableDataArray = [];
+        var data = [];
         for (var prop in pageEventsByScreen) {
           // skip loop if the property is from prototype
           if (!pageEventsByScreen.hasOwnProperty(prop)) continue;
 
-          pageEventsByScreen[prop].forEach(function(event) {
+          pageEventsByScreen[prop].forEach(function (event) {
             var newObj = {};
             newObj['User email'] = prop;
-            newObj['Event category'] = event.type === 'app.analytics.pageView' ? 'app_screen' : event.data.category || null;
-            newObj['Event action'] = event.type === 'app.analytics.pageView' ? 'screen_view' : event.data.action || null;
+            newObj['Event category'] = event.type === 'app.analytics.pageView' ? 'pageView' : event.data.category || null;
+            newObj['Event action'] = event.type === 'app.analytics.pageView' ? 'pageView' : event.data.action || null;
             newObj['Event label'] = event.data.label || null;
             newObj['Screen'] = event.data._pageTitle || null;
-            tableDataArray.push(newObj);
+            data.push(newObj);
           });
         }
-
-        if (actionsPerUserTable) {
-          actionsPerUserTable.clear();
-          actionsPerUserTable.rows.add(tableDataArray);
-          actionsPerUserTable.draw();
-        } else {
-          actionsPerUserTable = $('.actions-per-user').DataTable({
-            data: tableDataArray,
-            columns: [
-              { data: 'User email' },
-              { data: 'Event category' },
-              { data: 'Event action' },
-              { data: 'Event label' },
-              { data: 'Screen' }
-            ],
-            dom: 'Blfrtip',
-            buttons: [
-              'excel'
-            ],
-            responsive: {
-              details: {
-                display: $.fn.dataTable.Responsive.display.childRow
-              }
-            }
-          });
-        }
+        cachedUserActionData = { data: data, count: pageEvents.count };
+        return cachedUserActionData;
       });
   }
 
-  function getScreenActionData() {
-    Fliplet.App.Analytics.get({
-        where: {
-          createdAt: {
-            $gte: moment(analyticsStartDate).unix() * 1000,
-            $lte: moment(analyticsEndDate).unix() * 1000
+  function renderUserActionsDatatable() {
+    if (actionsPerUserTable) {
+      actionsPerUserTable.clear();
+      actionsPerUserTable.rows.add(cachedUserActionData.data);
+      actionsPerUserTable.draw();
+    } else {
+      actionsPerUserTable = $('.actions-per-user').DataTable({
+        ajax: function (data, callback, settings) {
+          var orderArray = data.order.map(function (orderObject) {
+            return [
+              settings.aoColumns[orderObject.column].key,
+              orderObject.dir.toUpperCase()
+            ]
+          })
+
+          var searchClause = data.search && data.search.value ?
+            {
+              $or: [
+                { 'type': { $iLike: `%${data.search.value}%` } },
+                { 'data.userEmail': { $iLike: `%${data.search.value}%` } },
+                { 'data.category': { $iLike: `%${data.search.value}%` } },
+                { 'data.action': { $iLike: `%${data.search.value}%` } },
+                { 'data.label': { $iLike: `%${data.search.value}%` } },
+                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
+              ],
+            } : null;
+          loadUserActionsData(data.length, data.start, searchClause, orderArray).then(function (paginatedData) {
+            callback({
+              data: paginatedData.data,
+              recordsTotal: paginatedData.count,
+              recordsFiltered: paginatedData.count
+            });
+          })
+        },
+        columns: [
+          { data: 'User email', key: 'data.userEmail' },
+          { data: 'Event category', key: 'data.category' },
+          { data: 'Event action', key: 'data.action' },
+          { data: 'Event label', key: 'data.label' },
+          { data: 'Screen', key: 'data._pageTitle' }
+        ],
+        dom: 'Blfrtip',
+        buttons: [
+          'excel'
+        ],
+        pageLength: 10,
+        processing: true,
+        serverSide: true,
+        responsive: {
+          details: {
+            display: $.fn.dataTable.Responsive.display.childRow
           }
         }
-      })
-      .then(function(data) {
-        var pageEvents = _.filter(data, function(row) {
-          return row.type === 'app.analytics.event';
-        });
+      });
+    }
+  }
 
-        var pageEventsByScreen = _.groupBy(pageEvents, 'data._pageTitle');
+  function loadScreenActionsData(limit, offset, searchClause, orderArray) {
+    var where = {
+      createdAt: {
+        $gte: moment(analyticsStartDate).unix() * 1000,
+        $lte: moment(analyticsEndDate).unix() * 1000
+      },
+      type: 'app.analytics.event'
+    };
 
-        var tableDataArray = [];
+    where = Object.assign(where, searchClause);
+
+    return Fliplet.App.Analytics.get({
+      limit: limit,
+      offset: offset,
+      where: where,
+      order: orderArray
+    })
+      .then(function (pageEvents) {
+        var pageEventsByScreen = _.groupBy(pageEvents.rows, 'data._pageTitle');
+
+        var data = [];
         for (var prop in pageEventsByScreen) {
           // skip loop if the property is from prototype
           if (!pageEventsByScreen.hasOwnProperty(prop)) continue;
 
-          pageEventsByScreen[prop].forEach(function(event) {
+          pageEventsByScreen[prop].forEach(function (event) {
             var newObj = {};
             newObj['Screen name'] = prop;
             newObj['Event category'] = event.data.category || null;
             newObj['Event action'] = event.data.action || null;
             newObj['Event label'] = event.data.label || null;
-            tableDataArray.push(newObj);
+            data.push(newObj);
           });
         }
+        cachedScreenActionData = { data: data, count: pageEvents.count };
+        return cachedScreenActionData;
+      });
+  }
 
-        if (actionsPerScreenTable) {
-          actionsPerScreenTable.clear();
-          actionsPerScreenTable.rows.add(tableDataArray);
-          actionsPerScreenTable.draw();
-        } else {
-          actionsPerScreenTable = $('.actions-per-screen').DataTable({
-            data: tableDataArray,
-            columns: [
-              { data: 'Screen name' },
-              { data: 'Event category' },
-              { data: 'Event action' },
-              { data: 'Event label' }
-            ],
-            dom: 'Blfrtip',
-            buttons: [
-              'excel'
-            ],
-            responsive: {
-              details: {
-                display: $.fn.dataTable.Responsive.display.childRow
-              }
-            }
-          });
+  function renderScreenActionsDatatable() {
+    if (actionsPerScreenTable) {
+      actionsPerScreenTable.clear();
+      actionsPerScreenTable.rows.add(tableDataArray);
+      actionsPerScreenTable.draw();
+    } else {
+      actionsPerScreenTable = $('.actions-per-screen').DataTable({
+        ajax: function (data, callback, settings) {
+          var orderArray = data.order.map(function (orderObject) {
+            return [
+              settings.aoColumns[orderObject.column].key,
+              orderObject.dir.toUpperCase()
+            ]
+          })
+
+          var searchClause = data.search && data.search.value ?
+            {
+              $or: [
+                { 'data.category': { $iLike: `%${data.search.value}%` } },
+                { 'data.action': { $iLike: `%${data.search.value}%` } },
+                { 'data.label': { $iLike: `%${data.search.value}%` } },
+                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
+              ],
+            } : null;
+          loadScreenActionsData(data.length, data.start, searchClause, orderArray).then(function (paginatedData) {
+            callback({
+              data: paginatedData.data,
+              recordsTotal: paginatedData.count,
+              recordsFiltered: paginatedData.count
+            });
+          })
+        },
+        columns: [
+          { data: 'Screen name', key: 'data._pageTitle' },
+          { data: 'Event category', key: 'data.category' },
+          { data: 'Event action', key: 'data.action' },
+          { data: 'Event label', key: 'data.label' },
+        ],
+        dom: 'Blfrtip',
+        buttons: [
+          'excel'
+        ],
+        pageLength: 10,
+        processing: true,
+        serverSide: true,
+        responsive: {
+          details: {
+            display: $.fn.dataTable.Responsive.display.childRow
+          }
         }
       });
+    }
   }
 
   function renderTable(data, context) {

@@ -457,6 +457,7 @@ span.analytics-box-number-prior {
 .app-analytics-container table td,
 .app-analytics-container table caption {
   min-width: unset;
+  word-break: break-all;
 }
 
 /***********  Table overlay css  ************/
