@@ -41,7 +41,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       dataIndex: 0,
       tableRows: [
         {
-          key: 'User email',
+          key: 'User',
           value: ['_userEmail', 'userEmail']
         },
         {
@@ -52,7 +52,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableSelector: '.active-users-full-table-sessions',
       table: undefined,
       tableColumns: [
-        { data: 'User email' },
+        { data: 'User' },
         { data: 'Sessions' }
       ],
       otherTableOne: 'users-screen-views',
@@ -65,7 +65,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       dataIndex: 1,
       tableRows: [
         {
-          key: 'User email',
+          key: 'User',
           value: ['_userEmail', 'userEmail']
         },
         {
@@ -76,7 +76,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       tableSelector: '.active-users-full-table-views',
       table: undefined,
       tableColumns: [
-        { data: 'User email' },
+        { data: 'User' },
         { data: 'Screen views' }
       ],
       otherTableOne: 'users-sessions',
@@ -89,19 +89,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       dataIndex: 2,
       tableRows: [
         {
-          key: 'User email',
+          key: 'User',
           value: ['_userEmail', 'userEmail']
         },
         {
-          key: 'Clicks',
+          key: 'Interactions',
           value: ['count', 'totalEvents']
         }
       ],
       tableSelector: '.active-users-full-table-clicks',
       table: undefined,
       tableColumns: [
-        { data: 'User email' },
-        { data: 'Clicks' }
+        { data: 'User' },
+        { data: 'Interactions' }
       ],
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-screen-views',
@@ -165,7 +165,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           value: ['_pageTitle', 'pageTitle']
         },
         {
-          key: 'Clicks',
+          key: 'Interactions',
           value: ['count', 'totalEvents']
         }
       ],
@@ -173,7 +173,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       table: undefined,
       tableColumns: [
         { data: 'Screen name' },
-        { data: 'Clicks' }
+        { data: 'Interactions' }
       ],
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-screen-views',
@@ -1373,23 +1373,16 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       order: orderArray
     })
       .then(function (pageEvents) {
-        var pageEventsByScreen = _.groupBy(pageEvents.logs, 'data._userEmail');
-
-        var data = [];
-        for (var prop in pageEventsByScreen) {
-          // skip loop if the property is from prototype
-          if (!pageEventsByScreen.hasOwnProperty(prop)) continue;
-
-          pageEventsByScreen[prop].forEach(function (event) {
-            var newObj = {};
-            newObj['User email'] = prop;
-            newObj['Event category'] = event.type === 'app.analytics.pageView' ? 'app_screen' : event.data.category || null;
-            newObj['Event action'] = event.type === 'app.analytics.pageView' ? 'screen_view' : event.data.action || null;
-            newObj['Event label'] = event.data.label || null;
-            newObj['Screen'] = event.data._pageTitle || null;
-            data.push(newObj);
-          });
-        }
+        var data = pageEvents.logs.map(function (event) {
+          return {
+            'User': event.data._userEmail || null,
+            'Screen': event.data._pageTitle || null,
+            'Type': event.type.replace('app.analytics.', ''),
+            'Event category': event.data.category || null,
+            'Event action': event.data.action || null,
+            'Event label': event.data.label || null,
+          }
+        })
         cachedUserActionData = { data: data, count: pageEvents.count };
         return cachedUserActionData;
       });
@@ -1413,12 +1406,12 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           var searchClause = data.search && data.search.value ?
             {
               $or: [
-                { 'type': { $iLike: `%${data.search.value}%` } },
-                { 'data.userEmail': { $iLike: `%${data.search.value}%` } },
+                { 'data._userEmail': { $iLike: `%${data.search.value}%` } },
+                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } },
+                { 'type': { $iLike: `%app.analytics.${data.search.value}%` } },
                 { 'data.category': { $iLike: `%${data.search.value}%` } },
                 { 'data.action': { $iLike: `%${data.search.value}%` } },
-                { 'data.label': { $iLike: `%${data.search.value}%` } },
-                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
+                { 'data.label': { $iLike: `%${data.search.value}%` } }
               ],
             } : null;
           loadUserActionsData(data.length, data.start, searchClause, orderArray).then(function (paginatedData) {
@@ -1430,16 +1423,23 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           })
         },
         columns: [
-          { data: 'User email', key: 'data.userEmail' },
+          { data: 'User', key: 'data._userEmail' },
+          { data: 'Screen', key: 'data._pageTitle' },
+          { data: 'Type', key: 'type' },
           { data: 'Event category', key: 'data.category' },
           { data: 'Event action', key: 'data.action' },
           { data: 'Event label', key: 'data.label' },
-          { data: 'Screen', key: 'data._pageTitle' }
         ],
         dom: 'Blfrtip',
         buttons: [
-          'excel'
+          {
+             extend: 'excel',
+             text: 'export visible entries to Excel'
+          }
         ],
+        lengthMenu: [ 10, 25, 50, 100, 500 ],
+        scrollY: 400,
+        scrollCollapse: true,
         pageLength: 10,
         processing: true,
         serverSide: true,
@@ -1470,22 +1470,14 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       order: orderArray
     })
       .then(function (pageEvents) {
-        var pageEventsByScreen = _.groupBy(pageEvents.logs, 'data._pageTitle');
-
-        var data = [];
-        for (var prop in pageEventsByScreen) {
-          // skip loop if the property is from prototype
-          if (!pageEventsByScreen.hasOwnProperty(prop)) continue;
-
-          pageEventsByScreen[prop].forEach(function (event) {
-            var newObj = {};
-            newObj['Screen name'] = prop;
-            newObj['Event category'] = event.data.category || null;
-            newObj['Event action'] = event.data.action || null;
-            newObj['Event label'] = event.data.label || null;
-            data.push(newObj);
-          });
-        }
+        var data = pageEvents.logs.map(function (event) {
+          return {
+            'Screen name': event.data._userEmail || null,
+            'Event category': event.data.category || null,
+            'Event action': event.data.action || null,
+            'Event label': event.data.label || null
+          }
+        })
         cachedScreenActionData = { data: data, count: pageEvents.count };
         return cachedScreenActionData;
       });
@@ -1531,8 +1523,14 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         ],
         dom: 'Blfrtip',
         buttons: [
-          'excel'
+          {
+             extend: 'excel',
+             text: 'export visible entries to Excel'
+          }
         ],
+        lengthMenu: [ 10, 25, 50, 100, 500 ],
+        scrollY: 400,
+        scrollCollapse: true,
         pageLength: 10,
         processing: true,
         serverSide: true,
@@ -1575,8 +1573,12 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         columns: configTableContext[context].tableColumns,
         dom: 'Blfrtip',
         buttons: [
-          'excel'
+          {
+             extend: 'excel',
+             text: 'export visible entries to Excel'
+          }
         ],
+        lengthMenu: [ 10, 25, 50, 100, 500 ],
         order: configTableContext[context].order,
         responsive: {
           details: {
