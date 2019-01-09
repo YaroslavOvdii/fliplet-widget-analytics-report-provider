@@ -1103,6 +1103,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           col: groupBy,
           count: 'sessionsCount'
         }
+      }).then(function(results){
+        return results.logs;
       });
 
       // Get count of screen views
@@ -1120,7 +1122,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           col: groupBy,
           count: true
         }
-      })
+      }).then(function(results){
+        return results.logs;
+      });
 
       // Get count of interactions
       metricInteractions = Fliplet.App.Analytics.get({
@@ -1140,6 +1144,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           col: groupBy,
           count: true
         }
+      }).then(function(results){
+        return results.logs;
       });
     } else {
       metricSessions = Fliplet.App.Analytics.Aggregate.get({
@@ -1207,6 +1213,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         duration: periodDurationInSeconds / 1000, // in seconds
         col: groupBy
       }
+    }).then(function(results){
+      return results.logs;
     });
 
     // timeline of sessions
@@ -1224,7 +1232,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         duration: periodDurationInSeconds / 1000, // in seconds
         col: groupBy
       }
-    })
+    }).then(function(results){
+      return results.logs;
+    });
 
     // timeline of screen views
     var timelineScreenViews = Fliplet.App.Analytics.get({
@@ -1240,7 +1250,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         duration: periodDurationInSeconds / 1000, // in seconds
         col: groupBy
       }
-    })
+    }).then(function(results){
+      return results.logs;
+    });
 
     // timeline of interactions
     var timelineInteractions = Fliplet.App.Analytics.get({
@@ -1259,7 +1271,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         duration: periodDurationInSeconds / 1000, // in seconds
         col: groupBy
       }
-    })
+    }).then(function(results){
+      return results.logs;
+    });
 
     return Promise.all([timelineDevices, timelineSessions, timelineScreenViews, timelineInteractions]).then(function (results) {
       setLoadingProgress(25);
@@ -1369,8 +1383,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           pageEventsByScreen[prop].forEach(function (event) {
             var newObj = {};
             newObj['User email'] = prop;
-            newObj['Event category'] = event.type === 'app.analytics.pageView' ? 'pageView' : event.data.category || null;
-            newObj['Event action'] = event.type === 'app.analytics.pageView' ? 'pageView' : event.data.action || null;
+            newObj['Event category'] = event.type === 'app.analytics.pageView' ? 'app_screen' : event.data.category || null;
+            newObj['Event action'] = event.type === 'app.analytics.pageView' ? 'screen_view' : event.data.action || null;
             newObj['Event label'] = event.data.label || null;
             newObj['Screen'] = event.data._pageTitle || null;
             data.push(newObj);
