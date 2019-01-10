@@ -68,7 +68,7 @@
               </label>
               <label class="radio-label">
                 <input type="radio" name="users-selector" value="users-clicks">
-                <span class="radio-label-btn">Clicks</span>
+                <span class="radio-label-btn">Interactions</span>
               </label>
             </form>
             <div class="analytics-row-wrapper analytics-row-wrapper-users">
@@ -92,16 +92,16 @@
             </div>
             <form class="screens-radio-selectors">
               <label class="radio-label">
-                <input type="radio" name="screen-selector" value="screens-screen-views">
-                <span class="radio-label-btn">Screen-views</span>
-              </label>
-              <label class="radio-label">
                 <input type="radio" name="screen-selector" value="screens-sessions">
                 <span class="radio-label-btn">Sessions</span>
               </label>
               <label class="radio-label">
+                <input type="radio" name="screen-selector" value="screens-screen-views">
+                <span class="radio-label-btn">Screen views</span>
+              </label>
+              <label class="radio-label">
                 <input type="radio" name="screen-selector" value="screens-clicks">
-                <span class="radio-label-btn">Clicks</span>
+                <span class="radio-label-btn">Interactions</span>
               </label>
             </form>
             <div class="analytics-row-wrapper analytics-row-wrapper-screen">
@@ -112,7 +112,7 @@
             </div>
           </div>
           <div class="analytics-box actions-by-screen">
-            <span class="analytics-box-title-span">ACTIONS PER SCREEN</span>
+            <span class="analytics-box-title-span">INTERACTIONS PER SCREEN</span>
             <div class="see-more inline more-actions-by-screen">See all
               <span class="fa fa-long-arrow-right"></span>
             </div>
@@ -212,7 +212,7 @@
         <table class="display responsive active-users-full-table-sessions" width="100%">
           <thead>
             <tr>
-              <th data-priority="1">User email</th>
+              <th data-priority="1">User</th>
               <th>Sessions</th>
             </tr>
           </thead>
@@ -220,7 +220,7 @@
         <table class="display responsive hidden active-users-full-table-views" width="100%">
           <thead>
             <tr>
-              <th data-priority="1">User email</th>
+              <th data-priority="1">User</th>
               <th>Screen views</th>
             </tr>
           </thead>
@@ -228,8 +228,8 @@
         <table class="display responsive hidden active-users-full-table-clicks" width="100%">
           <thead>
             <tr>
-              <th data-priority="1">User email</th>
-              <th>Clicks</th>
+              <th data-priority="1">User</th>
+              <th>Interactions</th>
             </tr>
           </thead>
         </table>
@@ -249,11 +249,12 @@
         <table class="display responsive actions-per-user" width="100%">
           <thead>
             <tr>
-              <th data-priority="1">User email</th>
+              <th data-priority="1">User</th>
+              <th data-priority="2">Screen</th>
+              <th>Type</th>
               <th>Event category</th>
-              <th data-priority="2">Event action</th>
+              <th data-priority="3">Event action</th>
               <th>Event label</th>
-              <th>Screen</th>
             </tr>
           </thead>
         </table>
@@ -290,7 +291,7 @@
           <thead>
             <tr>
               <th data-priority="1">Screen name</th>
-              <th>Clicks</th>
+              <th>Interactions</th>
             </tr>
           </thead>
         </table>
@@ -303,7 +304,7 @@
           <div class="close-button">
             <span class="fa fa-angle-left"></span>
           </div>
-          <div class="header-title">ACTIONS PER SCREEN</div>
+          <div class="header-title">INTERACTIONS PER SCREEN</div>
         </div>
       </div>
       <div class="options-wrapper">
