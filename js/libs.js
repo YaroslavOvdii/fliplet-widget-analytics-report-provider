@@ -444,6 +444,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .on('click', '.close-button', function() {
         $container.find('.full-screen-overlay').removeClass('active');
         $body.removeClass('freeze');
+        Fliplet.Widget.autosize();
       })
       .on('click', '.apply-button', function() {
         var dateValue = $(this).parents('.date-picker').find('input[name="date-selector"]:checked').val();
@@ -1396,24 +1397,44 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     } else {
       actionsPerUserTable = $('.actions-per-user').DataTable({
         ajax: function (data, callback, settings) {
+
+          var searchedColumns = data.columns.map(function (c, i) {
+            return { column: settings.aoColumns[i].key, value: c.search.value }
+          }).filter(function (c) {
+            return c.value
+          });
+
+          var searchClause = {
+            $and: searchedColumns.map(function (sc) {
+              var clause = {};
+              if (sc.column === 'type') {
+                clause[sc.column] = { $iLike: `%app.analytics.${sc.value}%` };
+              }
+              else {
+                clause[sc.column] = { $iLike: `%${sc.value}%` };
+              }
+              return clause;
+            })
+          };
+
+          if (data.search && data.search.value) {
+            searchClause['$or'] = [
+              { 'data._userEmail': { $iLike: `%${data.search.value}%` } },
+              { 'data._pageTitle': { $iLike: `%${data.search.value}%` } },
+              { 'type': { $iLike: `%app.analytics.${data.search.value}%` } },
+              { 'data.category': { $iLike: `%${data.search.value}%` } },
+              { 'data.action': { $iLike: `%${data.search.value}%` } },
+              { 'data.label': { $iLike: `%${data.search.value}%` } }
+            ]
+          };
+
           var orderArray = data.order.map(function (orderObject) {
             return [
               settings.aoColumns[orderObject.column].key,
               orderObject.dir.toUpperCase()
             ]
-          })
+          });
 
-          var searchClause = data.search && data.search.value ?
-            {
-              $or: [
-                { 'data._userEmail': { $iLike: `%${data.search.value}%` } },
-                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } },
-                { 'type': { $iLike: `%app.analytics.${data.search.value}%` } },
-                { 'data.category': { $iLike: `%${data.search.value}%` } },
-                { 'data.action': { $iLike: `%${data.search.value}%` } },
-                { 'data.label': { $iLike: `%${data.search.value}%` } }
-              ],
-            } : null;
           loadUserActionsData(data.length, data.start, searchClause, orderArray).then(function (paginatedData) {
             callback({
               data: paginatedData.data,
@@ -1433,11 +1454,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         dom: 'Blfrtip',
         buttons: [
           {
-             extend: 'excel',
-             text: 'export visible entries to Excel'
+            extend: 'excel',
+            text: 'export visible entries to Excel'
           }
         ],
-        lengthMenu: [ 10, 25, 50, 100, 500 ],
+        lengthMenu: [10, 25, 50, 100, 500],
         scrollY: 400,
         scrollCollapse: true,
         pageLength: 10,
@@ -1449,7 +1470,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         }
       });
+      renderColumnFilters(actionsPerUserTable);
     }
+    setTimeout(function(){
+      Fliplet.Studio.emit('widget-autosize', {
+        height: $('.dataTables_wrapper').outerHeight() + 120
+      });
+    }, 500)
   }
 
   function loadScreenActionsData(limit, offset, searchClause, orderArray) {
@@ -1472,7 +1499,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       .then(function (pageEvents) {
         var data = pageEvents.logs.map(function (event) {
           return {
-            'Screen name': event.data._userEmail || null,
+            'Screen name': event.data._pageTitle || null,
             'Event category': event.data.category || null,
             'Event action': event.data.action || null,
             'Event label': event.data.label || null
@@ -1486,27 +1513,42 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function renderScreenActionsDatatable() {
     if (actionsPerScreenTable) {
       actionsPerScreenTable.clear();
-      actionsPerScreenTable.rows.add(tableDataArray);
+      actionsPerScreenTable.rows.add(cachedScreenActionData.data);
       actionsPerScreenTable.draw();
     } else {
       actionsPerScreenTable = $('.actions-per-screen').DataTable({
         ajax: function (data, callback, settings) {
+          var searchedColumns = data.columns.map(function (c, i) {
+            return { column: settings.aoColumns[i].key, value: c.search.value }
+          }).filter(function (c) {
+            return c.value
+          });
+
+          var searchClause =
+          {
+            $and: searchedColumns.map(function (sc) {
+              var clause = {};
+              clause[sc.column] = { $iLike: `%${sc.value}%` };
+              return clause;
+            })
+          };
+
+          if(data.search && data.search.value){
+            searchClause['$or'] =[
+              { 'data.category': { $iLike: `%${data.search.value}%` } },
+              { 'data.action': { $iLike: `%${data.search.value}%` } },
+              { 'data.label': { $iLike: `%${data.search.value}%` } },
+              { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
+            ]
+          }
+
           var orderArray = data.order.map(function (orderObject) {
             return [
               settings.aoColumns[orderObject.column].key,
               orderObject.dir.toUpperCase()
             ]
-          })
+          });
 
-          var searchClause = data.search && data.search.value ?
-            {
-              $or: [
-                { 'data.category': { $iLike: `%${data.search.value}%` } },
-                { 'data.action': { $iLike: `%${data.search.value}%` } },
-                { 'data.label': { $iLike: `%${data.search.value}%` } },
-                { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
-              ],
-            } : null;
           loadScreenActionsData(data.length, data.start, searchClause, orderArray).then(function (paginatedData) {
             callback({
               data: paginatedData.data,
@@ -1528,7 +1570,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
              text: 'export visible entries to Excel'
           }
         ],
-        lengthMenu: [ 10, 25, 50, 100, 500 ],
+        lengthMenu: [10, 25, 50, 100, 500],
         scrollY: 400,
         scrollCollapse: true,
         pageLength: 10,
@@ -1540,7 +1582,29 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         }
       });
+      renderColumnFilters(actionsPerScreenTable);
     }
+    setTimeout(function(){
+      Fliplet.Studio.emit('widget-autosize', {
+        height: $('.dataTables_wrapper').outerHeight() + 120
+      });
+    }, 500)
+  }
+
+  function renderColumnFilters(table){
+    table.columns().every(function () {
+      var column = this;
+      var input = $('<input type="text" class="filter" />');
+      input.appendTo($(column.header()))
+      input.on('click', function (event) {
+        event.stopPropagation();
+      })
+      input.on('input', function () {
+        column
+          .search(this.value)
+          .draw();
+      });
+    });
   }
 
   function renderTable(data, context) {
@@ -1578,7 +1642,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
              text: 'export visible entries to Excel'
           }
         ],
-        lengthMenu: [ 10, 25, 50, 100, 500 ],
+        lengthMenu: [10, 25, 50, 100, 500],
         order: configTableContext[context].order,
         responsive: {
           details: {

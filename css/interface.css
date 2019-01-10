@@ -520,7 +520,15 @@ span.analytics-box-number-prior {
   height: 34px;
   margin: 0 10px;
 }
-
+.app-analytics-container .dataTables_wrapper .filter{
+  padding-left: 5px;
+  margin-top: 5px;
+  height: 25px;
+  font-size: 12px;
+  color: gray;
+  font-weight: normal;
+  border-radius: 2px;
+}
 .app-analytics-container .dataTables_wrapper input {
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 2px;
@@ -562,7 +570,7 @@ span.analytics-box-number-prior {
 }
 
 .app-analytics-container table.dataTable.no-footer {
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 .app-analytics-container .dt-button-background {
