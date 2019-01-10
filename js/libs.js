@@ -36,6 +36,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var $container = $(element);
   var $body = $(document.body);
   var DATATABLE_HEADER_AND_FOOTER_HEIGHT = 120;
+  var source = 'production';
 
   var configTableContext = {
     'users-sessions': {
@@ -1037,7 +1038,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // get active devices
     var metricDevices = Fliplet.App.Analytics.Aggregate.count({
-      source: 'production',
+      source: source,
       column: 'uniqueDevices',
       from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
       to: moment(currentPeriodStartDate).subtract(1, 'ms').format('YYYY-MM-DD')
@@ -1045,7 +1046,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       previousPeriodUsers = previousPeriod;
       // 2. get devices up to end of previous period
       return Fliplet.App.Analytics.Aggregate.count({
-        source: 'production',
+        source: source,
         column: 'uniqueDevices',
         from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).subtract(1, 'ms').format('YYYY-MM-DD')
@@ -1062,13 +1063,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // Get new devices
     var metricNewDevices = Fliplet.App.Analytics.Aggregate.count({
-      source: 'production',
+      source: source,
       column: 'uniqueDevices',
       to: moment(priorPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(countUpToStartOfPriorPeriod) {
       // 2. get devices up to end of previous period
       return Fliplet.App.Analytics.Aggregate.count({
-        source: 'production',
+        source: source,
         column: 'uniqueDevices',
         to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
       }).then(function(countUpToStartOfCurrentPeriod) {
@@ -1076,7 +1077,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
         // 3. get all time total count
         return Fliplet.App.Analytics.Aggregate.count({
-          source: 'production',
+          source: source,
           column: 'uniqueDevices',
           to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
         }).then(function(countUpToEndOfCurrentPeriod) {
@@ -1096,7 +1097,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     if (groupBy === 'hour') {
       metricSessions = Fliplet.App.Analytics.get({
-        source: 'production',
+        source: source,
         group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
         attributes: [{ distinctCount: true, col: 'data._analyticsSessionId', as: 'sessionsCount' }],
         where: {
@@ -1117,7 +1118,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
       // Get count of screen views
       metricScreenViews = Fliplet.App.Analytics.get({
-        source: 'production',
+        source: source,
         group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
         where: {
           type: 'app.analytics.pageView',
@@ -1137,7 +1138,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
       // Get count of interactions
       metricInteractions = Fliplet.App.Analytics.get({
-        source: 'production',
+        source: source,
         group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
         where: {
           type: 'app.analytics.event',
@@ -1159,7 +1160,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
     } else {
       metricSessions = Fliplet.App.Analytics.Aggregate.get({
-        source: 'production',
+        source: source,
         period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
@@ -1169,7 +1170,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
 
       metricScreenViews = Fliplet.App.Analytics.Aggregate.get({
-        source: 'production',
+        source: source,
         period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
@@ -1180,7 +1181,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
 
       metricInteractions = Fliplet.App.Analytics.Aggregate.get({
-        source: 'production',
+        source: source,
         period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
@@ -1202,7 +1203,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     if (!useLiveData) {
       return Fliplet.App.Analytics.Aggregate.get({
-        source: 'production',
+        source: source,
         period: Math.floor(periodDurationInSeconds / 1000 / (3600*24)), // in days
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
@@ -1214,7 +1215,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // timeline of active devices
     var timelineDevices = Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
       attributes: [{ distinctCount: true, col: 'data._deviceTrackingId', as: 'uniqueDeviceTracking' }],
       where: {
@@ -1234,7 +1235,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // timeline of sessions
     var timelineSessions = Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
       attributes: [{ distinctCount: true, col: 'data._analyticsSessionId', as: 'sessionsCount' }],
       where: {
@@ -1254,7 +1255,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // timeline of screen views
     var timelineScreenViews = Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
       where: {
         type: 'app.analytics.pageView',
@@ -1273,7 +1274,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // timeline of interactions
     var timelineInteractions = Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       group: [{ fn: 'date_trunc', part: groupBy, col: 'createdAt', as: groupBy }],
       where: {
         type: 'app.analytics.event',
@@ -1301,7 +1302,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function getActiveUserData(currentPeriodStartDate, currentPeriodEndDate, limit) {
     var userTableSessions = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'user',
       sum: 'uniqueSessions',
       order: [['count', 'DESC']],
@@ -1311,7 +1312,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
 
     var userTableScreenViews = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'user',
       sum: 'totalPageViews',
       order: [['count', 'DESC']],
@@ -1321,7 +1322,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
 
     var userTableInteractions = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'user',
       sum: 'totalEvents',
       order: [['count', 'DESC']],
@@ -1338,7 +1339,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function getPopularScreenData(currentPeriodStartDate, currentPeriodEndDate, limit) {
     var screenTableScreenViews = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'page',
       sum: 'totalPageViews',
       order: [['count', 'DESC']],
@@ -1348,7 +1349,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
 
     var screenTableSessions = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'page',
       sum: 'uniqueSessions',
       order: [['count', 'DESC']],
@@ -1358,7 +1359,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
 
     var screenTableScreenInteractions = Fliplet.App.Analytics.Aggregate.get({
-      source: 'production',
+      source: source,
       group: 'page',
       sum: 'totalEvents',
       order: [['count', 'DESC']],
@@ -1391,7 +1392,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     where = Object.assign(where, searchClause);
 
     return Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       limit: limit,
       offset: offset,
       where: where,
@@ -1515,7 +1516,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     where = Object.assign(where, searchClause);
 
     return Fliplet.App.Analytics.get({
-      source: 'production',
+      source: source,
       limit: limit,
       offset: offset,
       where: where,
