@@ -35,6 +35,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var configuration = data;
   var $container = $(element);
   var $body = $(document.body);
+  var DATATABLE_HEADER_AND_FOOTER_HEIGHT = 120;
 
   var configTableContext = {
     'users-sessions': {
@@ -1474,9 +1475,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     }
     setTimeout(function(){
       Fliplet.Studio.emit('widget-autosize', {
-        height: $('.dataTables_wrapper').outerHeight() + 120
+        height: $('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
       });
-    }, 500)
+    }, 500);
   }
 
   function loadScreenActionsData(limit, offset, searchClause, orderArray) {
@@ -1504,7 +1505,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             'Event action': event.data.action || null,
             'Event label': event.data.label || null
           }
-        })
+        });
         cachedScreenActionData = { data: data, count: pageEvents.count };
         return cachedScreenActionData;
       });
@@ -1524,8 +1525,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             return c.value
           });
 
-          var searchClause =
-          {
+          var searchClause = {
             $and: searchedColumns.map(function (sc) {
               var clause = {};
               clause[sc.column] = { $iLike: `%${sc.value}%` };
@@ -1540,7 +1540,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
               { 'data.label': { $iLike: `%${data.search.value}%` } },
               { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
             ]
-          }
+          };
 
           var orderArray = data.order.map(function (orderObject) {
             return [
@@ -1586,9 +1586,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     }
     setTimeout(function(){
       Fliplet.Studio.emit('widget-autosize', {
-        height: $('.dataTables_wrapper').outerHeight() + 120
+        height: $('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
       });
-    }, 500)
+    }, 500);
   }
 
   function renderColumnFilters(table){

@@ -569,10 +569,6 @@ span.analytics-box-number-prior {
   color: inherit !important;
 }
 
-.app-analytics-container table.dataTable.no-footer {
-  /* margin-top: 20px; */
-}
-
 .app-analytics-container .dt-button-background {
   display: none !important;
 }
