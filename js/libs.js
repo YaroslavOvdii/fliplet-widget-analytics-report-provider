@@ -1037,6 +1037,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // get active devices
     var metricDevices = Fliplet.App.Analytics.Aggregate.count({
+      source: 'production',
       column: 'uniqueDevices',
       from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
       to: moment(currentPeriodStartDate).subtract(1, 'ms').format('YYYY-MM-DD')
@@ -1044,6 +1045,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       previousPeriodUsers = previousPeriod;
       // 2. get devices up to end of previous period
       return Fliplet.App.Analytics.Aggregate.count({
+        source: 'production',
         column: 'uniqueDevices',
         from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).subtract(1, 'ms').format('YYYY-MM-DD')
@@ -1060,11 +1062,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // Get new devices
     var metricNewDevices = Fliplet.App.Analytics.Aggregate.count({
+      source: 'production',
       column: 'uniqueDevices',
       to: moment(priorPeriodStartDate).format('YYYY-MM-DD')
     }).then(function(countUpToStartOfPriorPeriod) {
       // 2. get devices up to end of previous period
       return Fliplet.App.Analytics.Aggregate.count({
+        source: 'production',
         column: 'uniqueDevices',
         to: moment(currentPeriodStartDate).format('YYYY-MM-DD')
       }).then(function(countUpToStartOfCurrentPeriod) {
@@ -1072,6 +1076,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
         // 3. get all time total count
         return Fliplet.App.Analytics.Aggregate.count({
+          source: 'production',
           column: 'uniqueDevices',
           to: moment(currentPeriodEndDate).format('YYYY-MM-DD')
         }).then(function(countUpToEndOfCurrentPeriod) {
@@ -1727,7 +1732,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       '[name="date-selector"][value="'+ dateSelectModeDefault +'"]',
       '[name="timeline-selector"][value="timeline-active-users"]',
       '[name="users-selector"][value="users-sessions"]',
-      '[name="screen-selector"][value="screens-screen-views"]'
+      '[name="screen-selector"][value="screens-sessions"]'
     ].join(', ');
 
     registerHandlebarsHelpers();
