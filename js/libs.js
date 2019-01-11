@@ -634,6 +634,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     // save dates to a persistant variable
     pvDateTimeObject = {
       dateSelectMode: dateSelectMode || 'last-7-days',
+      lastAccessedAt: new Date().getTime(),
       sd: analyticsStartDate,
       ed: analyticsEndDate,
       psd: analyticsPrevStartDate,
@@ -649,7 +650,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     // get dates and times
     Fliplet.Storage.get('analytics-' + appId + '-dateTime')
       .then(function(analyticsDateTime) {
-        if (analyticsDateTime) {
+        if (analyticsDateTime && moment(new Date()).diff(moment(analyticsDateTime.lastAccessedAt), 'days') < 1) {
           pvDateTimeObject = analyticsDateTime;
           dateSelectMode = pvDateTimeObject.dateSelectMode;
           analyticsStartDate = new Date(pvDateTimeObject.sd);
