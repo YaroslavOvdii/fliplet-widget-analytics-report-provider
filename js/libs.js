@@ -693,7 +693,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
           getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
         ]).then(function(data) {
-          var periodDurationInMs = moment(analyticsEndDate).diff(moment(analyticsStartDate), 'ms');
+          var periodDurationInMs = moment.duration(moment(analyticsEndDate).diff(moment(analyticsStartDate))).add(context !== 'hour' ? 1 : 0, context || 'day').asMilliseconds();
           prepareDataToRender(data, periodDurationInMs, context || 'day');
 
           stopLoading();
@@ -760,7 +760,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       getActiveUserData(analyticsStartDate, analyticsEndDate, limit),
       getPopularScreenData(analyticsStartDate, analyticsEndDate, limit)
     ]).then(function(data) {
-      var periodDurationInMs = moment(analyticsEndDate).diff(moment(analyticsStartDate), 'ms');
+      var periodDurationInMs = moment.duration(moment(analyticsEndDate).diff(moment(analyticsStartDate))).add(context !== 'hour' ? 1 : 0, context).asMilliseconds();
       prepareDataToRender(data, periodDurationInMs, context)
 
       stopLoading();
@@ -1013,7 +1013,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getMetricsData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
-    var periodDurationInMs = moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate), 'ms');
+    var periodDuration = moment.duration(moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate))).add(groupBy !== 'hour' ? 1 : 0, groupBy);
     var previousPeriodNewUsers;
     var currentPeriodNewUsers;
     var previousPeriodUsers;
@@ -1091,7 +1091,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         },
         period: {
-          duration: periodDurationInMs / 1000, // in seconds
+          duration: periodDuration.asMilliseconds(),
           col: groupBy,
           count: 'sessionsCount'
         }
@@ -1111,7 +1111,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         },
         period: {
-          duration: periodDurationInMs / 1000, // in seconds
+          duration: periodDuration.asMilliseconds(),
           col: groupBy,
           count: true
         }
@@ -1134,7 +1134,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         },
         period: {
-          duration: periodDurationInMs / 1000, // in seconds
+          duration: periodDuration.asMilliseconds(),
           col: groupBy,
           count: true
         }
@@ -1144,7 +1144,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     } else {
       metricSessions = Fliplet.App.Analytics.Aggregate.get({
         source: source,
-        period: Math.floor(periodDurationInMs / 1000 / (3600*24)), // in days
+        period: Math.floor(periodDuration.asDays()),
         from: priorPeriodStartDate,
         to: currentPeriodEndDate,
         sum: 'uniqueSessions'
@@ -1154,7 +1154,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
       metricScreenViews = Fliplet.App.Analytics.Aggregate.get({
         source: source,
-        period: Math.floor(periodDurationInMs / 1000 / (3600*24)), // in days
+        period: Math.floor(periodDuration.asDays()),
         from: priorPeriodStartDate,
         to: currentPeriodEndDate,
         sum: 'totalPageViews'
@@ -1165,7 +1165,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
       metricInteractions = Fliplet.App.Analytics.Aggregate.get({
         source: source,
-        period: Math.floor(periodDurationInMs / 1000 / (3600*24)), // in days
+        period: Math.floor(periodDuration.asDays()),
         from: priorPeriodStartDate,
         to: currentPeriodEndDate,
         sum: 'totalEvents'
@@ -1181,13 +1181,13 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getTimelineData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
-    var periodDurationInMs = moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate), 'ms');
+    var periodDuration = moment.duration(moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate))).add(groupBy !== 'hour' ? 1 : 0, groupBy);
     var useLiveData = groupBy === 'hour' || moment().diff(moment(priorPeriodStartDate), 'hours') <= 48;
 
     if (!useLiveData) {
       return Fliplet.App.Analytics.Aggregate.get({
         source: source,
-        period: Math.floor(periodDurationInMs / 1000 / (3600*24)), // in days
+        period: Math.floor(periodDuration.asDays()),
         from: priorPeriodStartDate,
         to: currentPeriodEndDate
       }).then(function (logs) {
@@ -1209,7 +1209,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         }
       },
       period: {
-        duration: periodDurationInMs / 1000, // in seconds
+        duration: periodDuration.asMilliseconds(),
         col: groupBy
       }
     }).then(function(results){
@@ -1229,7 +1229,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         }
       },
       period: {
-        duration: periodDurationInMs / 1000, // in seconds
+        duration: periodDuration.asMilliseconds(),
         col: groupBy
       }
     }).then(function(results){
@@ -1248,7 +1248,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         }
       },
       period: {
-        duration: periodDurationInMs / 1000, // in seconds
+        duration: periodDuration.asMilliseconds(),
         col: groupBy
       }
     }).then(function(results){
@@ -1270,7 +1270,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         }
       },
       period: {
-        duration: periodDurationInMs / 1000, // in seconds
+        duration: periodDuration.asMilliseconds(),
         col: groupBy
       }
     }).then(function(results){
