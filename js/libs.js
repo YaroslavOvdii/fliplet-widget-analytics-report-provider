@@ -652,7 +652,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         if (analyticsDateTime && moment().diff(moment(analyticsDateTime.lastAccessedAt), 'days') < 1) {
           pvDateTimeObject = analyticsDateTime;
           dateSelectMode = pvDateTimeObject.dateSelectMode;
-          if (pvDateTimeObject.sd.match(/\d{4}-\d{2}-\d{2}/)) {
+          if (pvDateTimeObject.sd.match(/^\d{4}-\d{2}-\d{2}$/)) {
             analyticsStartDate = pvDateTimeObject.sd;
             analyticsEndDate = pvDateTimeObject.ed;
             analyticsPrevStartDate = pvDateTimeObject.psd;
