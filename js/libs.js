@@ -1,6 +1,5 @@
 Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, data) {
   // Private variables
-  var dateTimeNow = new Date();
   var dateSelectMode;
   var analyticsStartDate;
   var analyticsEndDate;
@@ -498,8 +497,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             closeOverlay();
             break;
           case 'custom-dates':
-            customStartDateVariable = $(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0];
-            customEndDateVariable = $(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0];
+            customStartDateVariable = moment($(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
+            customEndDateVariable = moment($(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
             if (typeof customStartDateVariable === 'undefined') {
               $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
               $(this).parents('.date-picker').find('.custom-start-date-alert').addClass('active');
@@ -634,7 +633,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     // save dates to a persistant variable
     pvDateTimeObject = {
       dateSelectMode: dateSelectMode || 'last-7-days',
-      lastAccessedAt: new Date().getTime(),
+      lastAccessedAt: moment().valueOf(),
       sd: analyticsStartDate,
       ed: analyticsEndDate,
       psd: analyticsPrevStartDate,
@@ -650,13 +649,20 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     // get dates and times
     Fliplet.Storage.get('analytics-' + appId + '-dateTime')
       .then(function(analyticsDateTime) {
-        if (analyticsDateTime && moment(new Date()).diff(moment(analyticsDateTime.lastAccessedAt), 'days') < 1) {
+        if (analyticsDateTime && moment().diff(moment(analyticsDateTime.lastAccessedAt), 'days') < 1) {
           pvDateTimeObject = analyticsDateTime;
           dateSelectMode = pvDateTimeObject.dateSelectMode;
-          analyticsStartDate = new Date(pvDateTimeObject.sd);
-          analyticsEndDate = new Date(pvDateTimeObject.ed);
-          analyticsPrevStartDate = new Date(pvDateTimeObject.psd);
-          analyticsPrevEndDate = new Date(pvDateTimeObject.ped);
+          if (pvDateTimeObject.sd.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            analyticsStartDate = pvDateTimeObject.sd;
+            analyticsEndDate = pvDateTimeObject.ed;
+            analyticsPrevStartDate = pvDateTimeObject.psd;
+            analyticsPrevEndDate = pvDateTimeObject.ped;
+          } else {
+            analyticsStartDate = moment(pvDateTimeObject.sd).format('YYYY-MM-DD');
+            analyticsEndDate = moment(pvDateTimeObject.ed).format('YYYY-MM-DD');
+            analyticsPrevStartDate = moment(pvDateTimeObject.psd).format('YYYY-MM-DD');
+            analyticsPrevEndDate = moment(pvDateTimeObject.ped).format('YYYY-MM-DD');
+          }
 
           updateTimeframe(analyticsStartDate, analyticsEndDate);
           $('[name="date-selector"][value="'+ dateSelectMode +'"]').prop('checked', true);
@@ -687,7 +693,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           getActiveUserData(analyticsStartDate, analyticsEndDate, 5),
           getPopularScreenData(analyticsStartDate, analyticsEndDate, 5)
         ]).then(function(data) {
-          var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
+          var periodDurationInSeconds = moment(analyticsEndDate).diff(moment(analyticsStartDate), 'seconds');
           prepareDataToRender(data, periodDurationInSeconds, context || 'day');
 
           stopLoading();
@@ -699,75 +705,51 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function calculateAnalyticsDatesFor24Hrs() {
-    analyticsStartDate = new Date();
-    analyticsEndDate = new Date();
-    analyticsPrevStartDate = new Date();
-    analyticsPrevEndDate = new Date();
-    analyticsStartDate = moment(analyticsEndDate).subtract(1, 'days').toDate();
-    analyticsPrevStartDate = moment(analyticsStartDate).subtract(1, 'days').toDate();
-    analyticsPrevEndDate = moment(analyticsEndDate).subtract(1, 'days').toDate();
+    var d = moment();
+    analyticsEndDate = d.format('YYYY-MM-DD');
+    analyticsStartDate = d.subtract(1, 'day').format('YYYY-MM-DD');
+    analyticsPrevEndDate = d.subtract(1, 'day').format('YYYY-MM-DD');
+    analyticsPrevStartDate = d.subtract(1, 'day').format('YYYY-MM-DD');
   }
 
   function calculateAnalyticsDates(daysToGoBack) {
-    analyticsStartDate = new Date();
-    analyticsEndDate = new Date();
+    analyticsStartDate = moment().utc().format('YYYY-MM-DD');
+    analyticsEndDate = moment().utc().format('YYYY-MM-DD');
     calculateAnalyticsDatesCustom(analyticsStartDate, analyticsEndDate, false, 'days', daysToGoBack);
   }
 
   function calculateAnalyticsDatesByMonth(monthsToGoBack) {
-    analyticsStartDate = new Date();
-    analyticsEndDate = new Date();
+    analyticsStartDate = moment().utc().format('YYYY-MM-DD');
+    analyticsEndDate = moment().utc().format('YYYY-MM-DD');
     calculateAnalyticsDatesCustom(analyticsStartDate, analyticsEndDate, false, 'months', monthsToGoBack);
   }
 
   function calculateAnalyticsDatesCustom(customStartDate, customEndDate, isCustom, time, timeToGoBack) {
     if (isCustom) {
-      timeToGoBack = moment(customEndDate).diff(moment(customStartDate), 'days');
-      timeDeltaInMillisecs = customEndDate - customStartDate;
+      timeToGoBack = moment(customEndDate).diff(moment(customStartDate), 'days') + 1;
+      timeDeltaInMillisecs = moment(customEndDate).diff(moment(customStartDate), 'ms');
       time = 'days';
-      // Set start date
-      analyticsStartDate = new Date(customStartDate);
-      analyticsStartDate.setHours(0, 0, 0, 0);
 
-      // Set end date
-      analyticsEndDate = new Date(customEndDate);
-      analyticsEndDate.setHours(0, 0, 0, 0);
-
-      // Set previous period start date
-      analyticsPrevStartDate = new Date(analyticsStartDate);
-      analyticsPrevStartDate = moment(analyticsPrevStartDate).subtract(timeToGoBack, time).toDate();
-      // Set previous period end date
-      analyticsPrevEndDate = new Date(analyticsEndDate);
-      analyticsPrevEndDate = moment(analyticsPrevEndDate).subtract(timeToGoBack, time).toDate();
-    }
-    else{
       // Set start date
-      analyticsStartDate = new Date(customStartDate);
-      analyticsStartDate = moment(analyticsStartDate).subtract(timeToGoBack, time).toDate();
-      analyticsStartDate.setHours(0, 0, 0, 0);
+      analyticsStartDate = customStartDate;
       // Set end date
-      analyticsEndDate = new Date(customEndDate);
-      analyticsEndDate.setHours(0, 0, 0, 0);
-      analyticsEndDate.setMilliseconds(analyticsEndDate.getMilliseconds());
-      // Set previous period start date
-      analyticsPrevStartDate = new Date(analyticsStartDate);
-      analyticsPrevStartDate = moment(analyticsPrevStartDate).subtract(timeToGoBack, time).toDate();
-      // Set previous period end date
-      analyticsPrevEndDate = new Date(analyticsStartDate);
-      analyticsPrevEndDate = moment(analyticsPrevEndDate).subtract(timeToGoBack, time).toDate();
+      analyticsEndDate = customEndDate;
+    } else {
+      // Set start date
+      analyticsStartDate = moment(customStartDate).subtract(timeToGoBack, time).add(1, 'day').format('YYYY-MM-DD');
+      // Set end date
+      analyticsEndDate = moment(customEndDate).format('YYYY-MM-DD')
     }
+
+    // Set previous period start date
+    analyticsPrevStartDate = moment(analyticsStartDate).subtract(timeToGoBack, time).format('YYYY-MM-DD');
+    // Set previous period end date
+    analyticsPrevEndDate = moment(analyticsEndDate).subtract(timeToGoBack, time).format('YYYY-MM-DD');
   }
 
   function updateTimeframe(startDate, endDate) {
     // Make the dates readable
-    var startDateDayD = startDate.getDate();
-    var startDateMonthMMM = moment(startDate).format('MMM');
-    var startDateYear = moment(startDate).format('YY');
-    var endDateDayD = endDate.getDate();
-    var endDateMonthMMM = moment(endDate).format('MMM');
-    var endDateYear = moment(endDate).format('YY');
-    var dateRangeString = startDateDayD + " " + startDateMonthMMM + " '" + startDateYear + " - " + endDateDayD + " " + endDateMonthMMM + " '" + endDateYear;
-    $container.find('.analytics-date-range').html(dateRangeString);
+    $container.find('.analytics-date-range').html(moment(startDate).format('D MMM \'YY') + " - " + moment(endDate).format('D MMM \'YY'));
   }
 
   function getNewDataToRender(context, limit) {
@@ -778,7 +760,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       getActiveUserData(analyticsStartDate, analyticsEndDate, limit),
       getPopularScreenData(analyticsStartDate, analyticsEndDate, limit)
     ]).then(function(data) {
-      var periodDurationInSeconds = (analyticsEndDate - analyticsStartDate);
+      var periodDurationInSeconds = moment(analyticsEndDate).diff(moment(analyticsStartDate), 'seconds');
       prepareDataToRender(data, periodDurationInSeconds, context)
 
       stopLoading();
@@ -895,7 +877,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 0:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInSeconds);
             newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
             timelineActiveDevicesDataPrior.push(newArray);
           });
@@ -903,7 +885,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 1:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
+            newArray.push(moment(obj[context]).valueOf());
             newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
             timelineActiveDevicesData.push(newArray);
           });
@@ -925,7 +907,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 0:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInSeconds);
             newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
             timelineSessionsDataPrior.push(newArray);
           });
@@ -933,7 +915,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 1:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
+            newArray.push(moment(obj[context]).valueOf());
             newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
             timelineSessionsData.push(newArray);
           });
@@ -955,7 +937,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 0:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInSeconds);
             newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
             timelineScreenViewsDataPrior.push(newArray);
           });
@@ -963,7 +945,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 1:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
+            newArray.push(moment(obj[context]).valueOf());
             newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
             timelineScreenViewsData.push(newArray);
           });
@@ -985,7 +967,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 0:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push((moment(obj[context]).unix() * 1000) + pvDataArray.periodInSeconds);
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInSeconds);
             newArray.push(parseInt(obj.totalEvents || obj.count, 10));
             timelineInteractionsDataPrior.push(newArray);
           });
@@ -993,7 +975,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         case 1:
           period.data.forEach(function(obj) {
             var newArray = [];
-            newArray.push(moment(obj[context]).unix() * 1000);
+            newArray.push(moment(obj[context]).valueOf());
             newArray.push(parseInt(obj.totalEvents || obj.count, 10));
             timelineInteractionsData.push(newArray);
           });
@@ -1031,7 +1013,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getMetricsData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
-    var periodDurationInSeconds = (currentPeriodEndDate - currentPeriodStartDate);
+    var periodDurationInSeconds = moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate), 'seconds');
     var previousPeriodNewUsers;
     var currentPeriodNewUsers;
     var previousPeriodUsers;
@@ -1104,8 +1086,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         where: {
           data: { _analyticsSessionId: { $ne: null } },
           createdAt: {
-            $gte: moment(priorPeriodStartDate).unix() * 1000,
-            $lte: moment(currentPeriodEndDate).unix() * 1000
+            $gte: moment(priorPeriodStartDate).valueOf(),
+            $lte: moment(currentPeriodEndDate).valueOf()
           }
         },
         period: {
@@ -1124,8 +1106,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         where: {
           type: 'app.analytics.pageView',
           createdAt: {
-            $gte: moment(priorPeriodStartDate).unix() * 1000,
-            $lte: moment(currentPeriodEndDate).unix() * 1000
+            $gte: moment(priorPeriodStartDate).valueOf(),
+            $lte: moment(currentPeriodEndDate).valueOf()
           }
         },
         period: {
@@ -1147,8 +1129,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             nonInteraction: null
           },
           createdAt: {
-            $gte: moment(priorPeriodStartDate).unix() * 1000,
-            $lte: moment(currentPeriodEndDate).unix() * 1000
+            $gte: moment(priorPeriodStartDate).valueOf(),
+            $lte: moment(currentPeriodEndDate).valueOf()
           }
         },
         period: {
@@ -1166,7 +1148,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'uniqueSessions'
-      }).then(function (results) { 
+      }).then(function (results) {
         return normalizeAggregatedData(results, 'uniqueSessions')
       });
 
@@ -1176,7 +1158,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'totalPageViews'
-      }).then(function (results) { 
+      }).then(function (results) {
         return normalizeAggregatedData(results, 'totalPageViews')
       });
 
@@ -1187,7 +1169,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         from: moment(priorPeriodStartDate).format('YYYY-MM-DD'),
         to: moment(currentPeriodEndDate).format('YYYY-MM-DD'),
         sum: 'totalEvents'
-      }).then(function (results) { 
+      }).then(function (results) {
         return normalizeAggregatedData(results, 'totalEvents')
       });
     }
@@ -1199,7 +1181,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function getTimelineData(currentPeriodStartDate, currentPeriodEndDate, priorPeriodStartDate, groupBy) {
-    var periodDurationInSeconds = (currentPeriodEndDate - currentPeriodStartDate);
+    var periodDurationInSeconds = moment(currentPeriodEndDate).diff(moment(currentPeriodStartDate), 'seconds');
     var useLiveData = groupBy === 'hour' || moment().diff(moment(priorPeriodStartDate), 'hours') <= 48;
 
     if (!useLiveData) {
@@ -1222,8 +1204,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       where: {
         data: { _deviceTrackingId: { $ne: null } },
         createdAt: {
-          $gte: moment(priorPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
+          $gte: moment(priorPeriodStartDate).valueOf(),
+          $lte: moment(currentPeriodEndDate).valueOf()
         }
       },
       period: {
@@ -1242,8 +1224,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       where: {
         data: { _analyticsSessionId: { $ne: null } },
         createdAt: {
-          $gte: moment(priorPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
+          $gte: moment(priorPeriodStartDate).valueOf(),
+          $lte: moment(currentPeriodEndDate).valueOf()
         }
       },
       period: {
@@ -1261,8 +1243,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       where: {
         type: 'app.analytics.pageView',
         createdAt: {
-          $gte: moment(priorPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
+          $gte: moment(priorPeriodStartDate).valueOf(),
+          $lte: moment(currentPeriodEndDate).valueOf()
         }
       },
       period: {
@@ -1283,8 +1265,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           nonInteraction: null
         },
         createdAt: {
-          $gte: moment(priorPeriodStartDate).unix() * 1000,
-          $lte: moment(currentPeriodEndDate).unix() * 1000
+          $gte: moment(priorPeriodStartDate).valueOf(),
+          $lte: moment(currentPeriodEndDate).valueOf()
         }
       },
       period: {
@@ -1378,8 +1360,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function loadUserActionsData(limit, offset, searchClause, orderArray) {
     var where = {
       createdAt: {
-        $gte: moment(analyticsStartDate).unix() * 1000,
-        $lte: moment(analyticsEndDate).unix() * 1000
+        $gte: moment(analyticsStartDate).valueOf(),
+        $lte: moment(analyticsEndDate).valueOf()
       },
       $or: [
         {
@@ -1508,8 +1490,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   function loadScreenActionsData(limit, offset, searchClause, orderArray) {
     var where = {
       createdAt: {
-        $gte: moment(analyticsStartDate).unix() * 1000,
-        $lte: moment(analyticsEndDate).unix() * 1000
+        $gte: moment(analyticsStartDate).valueOf(),
+        $lte: moment(analyticsEndDate).valueOf()
       },
       type: 'app.analytics.event'
     };
