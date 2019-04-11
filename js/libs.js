@@ -1032,7 +1032,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         source: source,
         column: 'uniqueDevices',
         from: moment(currentPeriodStartDate).format('YYYY-MM-DD'),
-        to: moment(currentPeriodEndDate).subtract(1, 'ms').format('YYYY-MM-DD')
+        to: currentPeriodEndDate
       }).then(function(currentPeriod) {
         currentPeriodUsers = currentPeriod
         return;
