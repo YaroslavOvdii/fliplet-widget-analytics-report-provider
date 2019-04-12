@@ -363,6 +363,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
   function registerHandlebarsHelpers() {
     Handlebars.registerHelper('formatNumber', function(num) {
+      if (typeof num === 'string' && parseInt(num, 10) + '' === num) {
+        num = parseInt(num, 10);
+      }
+
       if (isNaN(num)) {
         return;
       }
