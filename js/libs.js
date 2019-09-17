@@ -647,8 +647,8 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       ped: analyticsPrevEndDate,
     };
 
-    Fliplet.App.Storage.set(DATE_STORE_KEY, pvDateTimeObject).then(function () {
-      Fliplet.App.Storage.set(DATA_STORE_KEY, pvDataArray);
+    return Fliplet.App.Storage.set(DATE_STORE_KEY, pvDateTimeObject).then(function () {
+      return Fliplet.App.Storage.set(DATA_STORE_KEY, pvDataArray);
     });
   }
 
