@@ -1,4 +1,8 @@
 Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, data) {
+  // Constants
+  var DATA_STORE_KEY = 'analytics-data-array';
+  var DATE_STORE_KEY = 'analytics-date-time';
+
   // Private variables
   var dateSelectMode;
   var analyticsStartDate;
@@ -22,7 +26,6 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var chartEmptyData = [[], []];
   var cachedUserActionData = { data: [] };
   var cachedScreenActionData = { data: [] };
-  var appId = Fliplet.Env.get('appId');
 
   var actionsPerUserTable;
   var actionsPerScreenTable;
@@ -644,14 +647,15 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       ped: analyticsPrevEndDate,
     };
 
-    Fliplet.Storage.set('analytics-' + appId + '-dateTime', pvDateTimeObject);
-    Fliplet.Storage.set('analytics-' + appId + '-dataArray', pvDataArray);
+    Fliplet.App.Storage.set(DATE_STORE_KEY, pvDateTimeObject).then(function () {
+      Fliplet.App.Storage.set(DATA_STORE_KEY, pvDataArray);
+    });
   }
 
   function getDataFromPersistantVariable() {
 
     // get dates and times
-    Fliplet.Storage.get('analytics-' + appId + '-dateTime')
+    Fliplet.App.Storage.get(DATE_STORE_KEY)
       .then(function(analyticsDateTime) {
         if (analyticsDateTime && moment().diff(moment(analyticsDateTime.lastAccessedAt), 'days') < 1) {
           pvDateTimeObject = analyticsDateTime;
@@ -678,7 +682,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         };
       });
 
-    Fliplet.Storage.get('analytics-' + appId + '-dataArray')
+    Fliplet.App.Storage.get(DATA_STORE_KEY)
       .then(function(analyticsDataArray) {
         var context;
 
