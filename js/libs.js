@@ -1383,20 +1383,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       limit: limit,
       offset: offset,
       where: where,
-      order: orderArray
+      order: orderArray,
+      group: [
+        'data._userEmail', 'data._pageTitle', 'data.category', 'data.action', 'data.label', 'type'
+      ]
     })
       .then(function (pageEvents) {
         var data = pageEvents.logs.map(function (event) {
           return {
-            'User': event.data._userEmail || null,
-            'Screen': event.data._pageTitle || null,
+            'User': event._userEmail || null,
+            'Screen': event._pageTitle || null,
             'Type': event.type.replace('app.analytics.', ''),
-            'Event category': event.data.category || null,
-            'Event action': event.data.action || null,
-            'Event label': event.data.label || null,
+            'Event category': event.category || null,
+            'Event action': event.action || null,
+            'Event label': event.label || null,
+            'Count': parseInt(event.count, 10) || 0
           }
-        })
-        cachedUserActionData = { data: data, count: pageEvents.count };
+        });
+
+        cachedUserActionData = { data: data, count: pageEvents.logs.length };
         return cachedUserActionData;
       });
   }
@@ -1462,6 +1467,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           { data: 'Event category', key: 'data.category' },
           { data: 'Event action', key: 'data.action' },
           { data: 'Event label', key: 'data.label' },
+          { data: 'Count', key: 'data.count' }
         ],
         dom: 'Blfrtip',
         buttons: [
@@ -1507,18 +1513,22 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       limit: limit,
       offset: offset,
       where: where,
-      order: orderArray
+      order: orderArray,
+      group: [
+        'data._pageTitle', 'data.category', 'data.action', 'data.label', 'type'
+      ]
     })
       .then(function (pageEvents) {
         var data = pageEvents.logs.map(function (event) {
           return {
-            'Screen name': event.data._pageTitle || null,
-            'Event category': event.data.category || null,
-            'Event action': event.data.action || null,
-            'Event label': event.data.label || null
+            'Screen name': event._pageTitle || null,
+            'Event category': event.category || null,
+            'Event action': event.action || null,
+            'Event label': event.label || null,
+            'Count': parseInt(event.count, 10) || 0
           }
         });
-        cachedScreenActionData = { data: data, count: pageEvents.count };
+        cachedScreenActionData = { data: data, count: pageEvents.logs.length };
         return cachedScreenActionData;
       });
   }
@@ -1574,6 +1584,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           { data: 'Event category', key: 'data.category' },
           { data: 'Event action', key: 'data.action' },
           { data: 'Event label', key: 'data.label' },
+          { data: 'Count', key: 'data.count' },
         ],
         dom: 'Blfrtip',
         buttons: [
