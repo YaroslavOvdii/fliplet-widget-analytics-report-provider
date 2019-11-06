@@ -1484,9 +1484,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
       renderColumnFilters(actionsPerUserTable);
     }
-    setTimeout(function(){
+    setTimeout(function() {
       Fliplet.Studio.emit('widget-autosize', {
-        height: $('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
+        height: $('.full-screen-overlay.active').find('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
       });
     }, 1000);
   }
@@ -1596,9 +1596,9 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       });
       renderColumnFilters(actionsPerScreenTable);
     }
-    setTimeout(function(){
+    setTimeout(function() {
       Fliplet.Studio.emit('widget-autosize', {
-        height: $('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
+        height: $('.full-screen-overlay.active').find('.dataTables_wrapper').outerHeight() + DATATABLE_HEADER_AND_FOOTER_HEIGHT
       });
     }, 1000);
   }
