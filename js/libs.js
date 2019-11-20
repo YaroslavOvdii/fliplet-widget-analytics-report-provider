@@ -1401,7 +1401,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           }
         });
 
-        cachedUserActionData = { data: data, count: pageEvents.logs.length };
+        cachedUserActionData = { data: data, count: pageEvents.count.length };
         return cachedUserActionData;
       });
   }
@@ -1528,7 +1528,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             'Count': parseInt(event.count, 10) || 0
           }
         });
-        cachedScreenActionData = { data: data, count: pageEvents.logs.length };
+        cachedScreenActionData = { data: data, count: pageEvents.count.length };
         return cachedScreenActionData;
       });
   }
