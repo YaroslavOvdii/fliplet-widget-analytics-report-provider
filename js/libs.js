@@ -423,7 +423,6 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         $container.find('.custom-end-date-alert, .custom-start-date-alert').removeClass('active');
         $container.find('.apply-button').prop('disabled', false);
       }
-
     });
 
     $container
