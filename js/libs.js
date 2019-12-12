@@ -347,6 +347,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   var progress = 0;
+
   function setLoadingProgress(progressUpdate) {
     if (!progressUpdate) {
       progress = 0;
