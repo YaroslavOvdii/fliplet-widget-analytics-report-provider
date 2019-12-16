@@ -387,6 +387,10 @@ span.analytics-box-number-prior {
   background: #333333;
 }
 
+.app-analytics-container .custom-dates-hidden-content {
+  display: inline-block;
+}
+
 .app-analytics-container .datepicker {
   background-color: transparent;
   border: none;
