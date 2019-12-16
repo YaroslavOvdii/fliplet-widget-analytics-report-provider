@@ -81,6 +81,11 @@
   -ms-user-select: none;
   user-select: none;
 }
+.datepicker-years,
+.datepicker-decades,
+.datepicker-centuries {
+  min-width: 250px;
+}
 .datepicker table tr td,
 .datepicker table tr th {
   text-align: center;
