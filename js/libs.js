@@ -392,7 +392,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       autoclose: true
     });
     // custom dates start-date validation
-    $container.find('.pickerStartDate').datepicker().on('changeDate', function(e) {
+    $container.find('.pickerStartDate').datepicker().on('hide changeDate', function(e) {
       // if start date exists check end date is after start date
       if (typeof $('.pickerEndDate').data('datepicker').dates[0] === 'undefined') {
         $('.custom-start-date-alert').removeClass('active');
@@ -409,7 +409,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
       }
     });
     // custom dates end-date validation
-    $container.find('.pickerEndDate').datepicker().on('changeDate', function(e) {
+    $container.find('.pickerEndDate').datepicker().on('hide changeDate', function(e) {
       // if start date exists check end date is after start date
       if (typeof $container.find('.pickerStartDate').data('datepicker').dates[0] === 'undefined') {
         $container.find('.custom-end-date-alert').removeClass('active');
