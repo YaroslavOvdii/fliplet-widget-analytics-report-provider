@@ -81,6 +81,14 @@
   -ms-user-select: none;
   user-select: none;
 }
+.datepicker-months {
+  min-width: 235px;
+}
+.datepicker-years,
+.datepicker-decades,
+.datepicker-centuries {
+  min-width: 280px;
+}
 .datepicker table tr td,
 .datepicker table tr th {
   text-align: center;
@@ -680,4 +688,3 @@ fieldset[disabled] .datepicker table tr td span.active.disabled:hover.focus {
   margin-left: -5px;
   margin-right: -5px;
 }
-/*# sourceMappingURL=bootstrap-datepicker3.css.map */
