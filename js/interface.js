@@ -13,7 +13,7 @@ analyticsReports.push({
   instance: new AnalyticsReport(element, data)
 });
 
-Fliplet.Widget.register('AnalyticsReport:1.0.0', function () {
+Fliplet.Widget.register('AnalyticsReport:1.0.0', function() {
   function getReport(options) {
     if (!Object.keys(analyticsReports).length) {
       throw new Error('No reports found.');
@@ -44,5 +44,5 @@ Fliplet.Widget.register('AnalyticsReport:1.0.0', function () {
   return {
     getReport: getReport
   };
-});  
+});
 
