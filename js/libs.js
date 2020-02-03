@@ -1429,23 +1429,25 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
             $and: searchedColumns.map(function (sc) {
               var clause = {};
               if (sc.column === 'type') {
-                clause[sc.column] = { $iLike: `%app.analytics.${sc.value}%` };
+                clause[sc.column] = { $iLike: '%app.analytics.' + sc.value + '%' };
               }
               else {
-                clause[sc.column] = { $iLike: `%${sc.value}%` };
+                clause[sc.column] = { $iLike: '%' + sc.value + '%' };
               }
               return clause;
             })
           };
 
           if (data.search && data.search.value) {
+            var searchValue = '%' + data.search.value + '%';
+
             searchClause['$or'] = [
-              { 'data._userEmail': { $iLike: `%${data.search.value}%` } },
-              { 'data._pageTitle': { $iLike: `%${data.search.value}%` } },
-              { 'type': { $iLike: `%app.analytics.${data.search.value}%` } },
-              { 'data.category': { $iLike: `%${data.search.value}%` } },
-              { 'data.action': { $iLike: `%${data.search.value}%` } },
-              { 'data.label': { $iLike: `%${data.search.value}%` } }
+              { 'data._userEmail': { $iLike: searchValue } },
+              { 'data._pageTitle': { $iLike: searchValue } },
+              { 'type': { $iLike: '%app.analytics.' + data.search.value + '%' } },
+              { 'data.category': { $iLike: searchValue } },
+              { 'data.action': { $iLike: searchValue } },
+              { 'data.label': { $iLike: searchValue } }
             ]
           };
 
@@ -1554,17 +1556,19 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
           var searchClause = {
             $and: searchedColumns.map(function (sc) {
               var clause = {};
-              clause[sc.column] = { $iLike: `%${sc.value}%` };
+              clause[sc.column] = { $iLike: '%' + sc.value + '%' };
               return clause;
             })
           };
 
           if(data.search && data.search.value){
+            var searchValue = '%' + data.search.value + '%';
+
             searchClause['$or'] =[
-              { 'data.category': { $iLike: `%${data.search.value}%` } },
-              { 'data.action': { $iLike: `%${data.search.value}%` } },
-              { 'data.label': { $iLike: `%${data.search.value}%` } },
-              { 'data._pageTitle': { $iLike: `%${data.search.value}%` } }
+              { 'data.category': { $iLike: searchValue } },
+              { 'data.action': { $iLike: searchValue } },
+              { 'data.label': { $iLike: searchValue } },
+              { 'data._pageTitle': { $iLike: searchValue } }
             ]
           };
 
