@@ -287,29 +287,29 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         var momentTime;
 
         switch (dateSelectMode) {
-        case 'last-24-hours':
-          momentTime = moment(this.x).subtract(1, 'days');
-          break;
-        case 'last-7-days':
-          momentTime = moment(this.x).subtract(7, 'days');
-          break;
-        case 'last-30-days':
-          momentTime = moment(this.x).subtract(30, 'days');
-          break;
-        case 'last-90-days':
-          momentTime = moment(this.x).subtract(90, 'days');
-          break;
-        case 'last-6-months':
-          momentTime = moment(this.x).subtract(6, 'months');
-          break;
-        case 'last-12-months':
-          momentTime = moment(this.x).subtract(12, 'months');
-          break;
-        case 'custom-dates':
-          momentTime = moment(this.x).subtract(timeDeltaInMillisecs);
-          break;
-        default:
-          break;
+          case 'last-24-hours':
+            momentTime = moment(this.x).subtract(1, 'days');
+            break;
+          case 'last-7-days':
+            momentTime = moment(this.x).subtract(7, 'days');
+            break;
+          case 'last-30-days':
+            momentTime = moment(this.x).subtract(30, 'days');
+            break;
+          case 'last-90-days':
+            momentTime = moment(this.x).subtract(90, 'days');
+            break;
+          case 'last-6-months':
+            momentTime = moment(this.x).subtract(6, 'months');
+            break;
+          case 'last-12-months':
+            momentTime = moment(this.x).subtract(12, 'months');
+            break;
+          case 'custom-dates':
+            momentTime = moment(this.x).subtract(timeDeltaInMillisecs);
+            break;
+          default:
+            break;
         }
         if (this.series.name === 'Prior period') {
           text = momentTime.format('MMM Do, HH:mm') + '<br><b>'
@@ -382,8 +382,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   }
 
   function attachEventListeners() {
-    // eslint-disable-next-line spaced-comment
-    /*********************************************************
+    /** *******************************************************
     Date picker overlay
     **********************************************************/
     $container.find('.datepicker').datepicker({
@@ -463,71 +462,71 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         startLoading();
 
         switch (dateValue) {
-        case 'last-24-hours':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDatesFor24Hrs();
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('hour', 5);
-          closeOverlay();
-          break;
-        case 'last-7-days':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDates(7);
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('day', 5);
-          closeOverlay();
-          break;
-        case 'last-30-days':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDates(30);
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('day', 5);
-          closeOverlay();
-          break;
-        case 'last-90-days':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDates(90);
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('day', 5);
-          closeOverlay();
-          break;
-        case 'last-6-months':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDatesByMonth(6);
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('day', 5);
-          closeOverlay();
-          break;
-        case 'last-12-months':
-          dateSelectMode = dateValue;
-          calculateAnalyticsDatesByMonth(12);
-          updateTimeframe(analyticsStartDate, analyticsEndDate);
-          getNewDataToRender('day', 5);
-          closeOverlay();
-          break;
-        case 'custom-dates':
-          customStartDateVariable = moment($(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
-          customEndDateVariable = moment($(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
-          if (typeof customStartDateVariable === 'undefined') {
-            $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
-            $(this).parents('.date-picker').find('.custom-start-date-alert').addClass('active');
-          } else if (typeof customEndDateVariable === 'undefined') {
-            $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
-            $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
-          } else if (customEndDateVariable < customStartDateVariable) {
-            $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
-            $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
-          } else {
-            // no validation errors so update the dates
+          case 'last-24-hours':
             dateSelectMode = dateValue;
-            calculateAnalyticsDatesCustom(customStartDateVariable, customEndDateVariable, true);
+            calculateAnalyticsDatesFor24Hrs();
+            updateTimeframe(analyticsStartDate, analyticsEndDate);
+            getNewDataToRender('hour', 5);
+            closeOverlay();
+            break;
+          case 'last-7-days':
+            dateSelectMode = dateValue;
+            calculateAnalyticsDates(7);
             updateTimeframe(analyticsStartDate, analyticsEndDate);
             getNewDataToRender('day', 5);
             closeOverlay();
-          }
-          break;
-        default:
-          break;
+            break;
+          case 'last-30-days':
+            dateSelectMode = dateValue;
+            calculateAnalyticsDates(30);
+            updateTimeframe(analyticsStartDate, analyticsEndDate);
+            getNewDataToRender('day', 5);
+            closeOverlay();
+            break;
+          case 'last-90-days':
+            dateSelectMode = dateValue;
+            calculateAnalyticsDates(90);
+            updateTimeframe(analyticsStartDate, analyticsEndDate);
+            getNewDataToRender('day', 5);
+            closeOverlay();
+            break;
+          case 'last-6-months':
+            dateSelectMode = dateValue;
+            calculateAnalyticsDatesByMonth(6);
+            updateTimeframe(analyticsStartDate, analyticsEndDate);
+            getNewDataToRender('day', 5);
+            closeOverlay();
+            break;
+          case 'last-12-months':
+            dateSelectMode = dateValue;
+            calculateAnalyticsDatesByMonth(12);
+            updateTimeframe(analyticsStartDate, analyticsEndDate);
+            getNewDataToRender('day', 5);
+            closeOverlay();
+            break;
+          case 'custom-dates':
+            customStartDateVariable = moment($(this).parents('.date-picker').find('.pickerStartDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
+            customEndDateVariable = moment($(this).parents('.date-picker').find('.pickerEndDate').data('datepicker').dates[0]).utc().format('YYYY-MM-DD');
+            if (typeof customStartDateVariable === 'undefined') {
+              $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
+              $(this).parents('.date-picker').find('.custom-start-date-alert').addClass('active');
+            } else if (typeof customEndDateVariable === 'undefined') {
+              $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
+              $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
+            } else if (customEndDateVariable < customStartDateVariable) {
+              $(this).parents('.date-picker').find('.custom-dates-inputs').css({ height: 'auto' });
+              $(this).parents('.date-picker').find('.custom-end-date-alert').addClass('active');
+            } else {
+            // no validation errors so update the dates
+              dateSelectMode = dateValue;
+              calculateAnalyticsDatesCustom(customStartDateVariable, customEndDateVariable, true);
+              updateTimeframe(analyticsStartDate, analyticsEndDate);
+              getNewDataToRender('day', 5);
+              closeOverlay();
+            }
+            break;
+          default:
+            break;
         }
       })
       .on('click', '.more-active-users', function() {
@@ -566,62 +565,62 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         var value = $('[name="timeline-selector"]:checked').val();
 
         switch (value) {
-        case 'timeline-active-users':
+          case 'timeline-active-users':
           // datetime specified in milliseconds
-          getChart().series[0].setData(timelineActiveDevicesDataPrior);
-          getChart().series[1].setData(timelineActiveDevicesData);
-          break;
-        case 'timeline-sessions':
+            getChart().series[0].setData(timelineActiveDevicesDataPrior);
+            getChart().series[1].setData(timelineActiveDevicesData);
+            break;
+          case 'timeline-sessions':
           // datetime specified in milliseconds
-          getChart().series[0].setData(timelineSessionsDataPrior);
-          getChart().series[1].setData(timelineSessionsData);
-          break;
-        case 'timeline-screen-views':
+            getChart().series[0].setData(timelineSessionsDataPrior);
+            getChart().series[1].setData(timelineSessionsData);
+            break;
+          case 'timeline-screen-views':
           // datetime specified in milliseconds
-          getChart().series[0].setData(timelineScreenViewsDataPrior);
-          getChart().series[1].setData(timelineScreenViewsData);
-          break;
-        case 'timeline-clicks':
+            getChart().series[0].setData(timelineScreenViewsDataPrior);
+            getChart().series[1].setData(timelineScreenViewsData);
+            break;
+          case 'timeline-clicks':
           // datetime specified in milliseconds
-          getChart().series[0].setData(timelineInteractionsDataPrior);
-          getChart().series[1].setData(timelineInteractionsData);
-          break;
-        default:
-          break;
+            getChart().series[0].setData(timelineInteractionsDataPrior);
+            getChart().series[1].setData(timelineInteractionsData);
+            break;
+          default:
+            break;
         }
       })
       .on('change', '[name="users-selector"]', function() {
         var value = $('[name="users-selector"]:checked').val();
 
         switch (value) {
-        case 'users-sessions':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[0]));
-          break;
-        case 'users-screen-views':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[1]));
-          break;
-        case 'users-clicks':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[2]));
-          break;
-        default:
-          break;
+          case 'users-sessions':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[0]));
+            break;
+          case 'users-screen-views':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[1]));
+            break;
+          case 'users-clicks':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[2]));
+            break;
+          default:
+            break;
         }
       })
       .on('change', '[name="screen-selector"]', function() {
         var value = $('[name="screen-selector"]:checked').val();
 
         switch (value) {
-        case 'screens-screen-views':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[0]));
-          break;
-        case 'screens-sessions':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[1]));
-          break;
-        case 'screens-clicks':
-          $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[2]));
-          break;
-        default:
-          break;
+          case 'screens-screen-views':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[0]));
+            break;
+          case 'screens-sessions':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[1]));
+            break;
+          case 'screens-clicks':
+            $(this).parents('.analytics-box').find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[2]));
+            break;
+          default:
+            break;
         }
       });
   }
@@ -828,33 +827,33 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     pvDataArray.metricsData.forEach(function(arr, index) {
       var newObj = {};
       switch (index) {
-      case 0:
-        newObj['Title'] = 'Active devices';
-        newObj['Prior period'] = arr.metricActiveDevicesPrior;
-        newObj['Selected period'] = arr.metricActiveDevices;
-        break;
-      case 1:
-        newObj['Title'] = 'New devices';
-        newObj['Prior period'] = arr.metricNewDevicesPrior;
-        newObj['Selected period'] = arr.metricNewDevices;
-        break;
-      case 2:
-        newObj['Title'] = 'Sessions';
-        newObj['Prior period'] = arr[0] ? arr[0].count : 0;
-        newObj['Selected period'] = arr[1] ? arr[1].count : 0;
-        break;
-      case 3:
-        newObj['Title'] = 'Screen views';
-        newObj['Prior period'] = arr[0] ? arr[0].count : 0;
-        newObj['Selected period'] = arr[1] ? arr[1].count : 0;
-        break;
-      case 4:
-        newObj['Title'] = 'Interactions';
-        newObj['Prior period'] = arr[0] ? arr[0].count : 0;
-        newObj['Selected period'] = arr[1] ? arr[1].count : 0;
-        break;
-      default:
-        break;
+        case 0:
+          newObj['Title'] = 'Active devices';
+          newObj['Prior period'] = arr.metricActiveDevicesPrior;
+          newObj['Selected period'] = arr.metricActiveDevices;
+          break;
+        case 1:
+          newObj['Title'] = 'New devices';
+          newObj['Prior period'] = arr.metricNewDevicesPrior;
+          newObj['Selected period'] = arr.metricNewDevices;
+          break;
+        case 2:
+          newObj['Title'] = 'Sessions';
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
+          break;
+        case 3:
+          newObj['Title'] = 'Screen views';
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
+          break;
+        case 4:
+          newObj['Title'] = 'Interactions';
+          newObj['Prior period'] = arr[0] ? arr[0].count : 0;
+          newObj['Selected period'] = arr[1] ? arr[1].count : 0;
+          break;
+        default:
+          break;
       }
       appMetricsArrayData.push(newObj);
     });
@@ -862,32 +861,32 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // RENDER MOST ACTIVE USERS
     switch ($container.find('[name="users-selector"]:checked').val()) {
-    case 'users-sessions':
-      $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[0]));
-      break;
-    case 'users-screen-views':
-      $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[1]));
-      break;
-    case 'users-clicks':
-      $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[2]));
-      break;
-    default:
-      break;
+      case 'users-sessions':
+        $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[0]));
+        break;
+      case 'users-screen-views':
+        $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[1]));
+        break;
+      case 'users-clicks':
+        $container.find('.analytics-row-wrapper-users').html(compiledActiveUserTemplate(pvDataArray.activeUserData[2]));
+        break;
+      default:
+        break;
     }
 
     // RENDER MOST POPULAR SCREENS
     switch ($container.find('[name="screen-selector"]:checked').val()) {
-    case 'screens-screen-views':
-      $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[0]));
-      break;
-    case 'screens-sessions':
-      $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[1]));
-      break;
-    case 'screens-clicks':
-      $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[2]));
-      break;
-    default:
-      break;
+      case 'screens-screen-views':
+        $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[0]));
+        break;
+      case 'screens-sessions':
+        $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[1]));
+        break;
+      case 'screens-clicks':
+        $container.find('.analytics-row-wrapper-screen').html(compiledPopularScreenTemplate(pvDataArray.popularScreenData[2]));
+        break;
+      default:
+        break;
     }
 
     // MUTATE TIMELINE DATA
@@ -896,24 +895,24 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     timelineActiveDevicesData = []; // Cleans it
     pvDataArray.timelineData[0].forEach(function(period, index) {
       switch (index) {
-      case 0:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
-          newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
-          timelineActiveDevicesDataPrior.push(newArray);
-        });
-        break;
-      case 1:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push(moment(obj[context]).valueOf());
-          newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
-          timelineActiveDevicesData.push(newArray);
-        });
-        break;
-      default:
-        break;
+        case 0:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
+            newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
+            timelineActiveDevicesDataPrior.push(newArray);
+          });
+          break;
+        case 1:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push(moment(obj[context]).valueOf());
+            newArray.push(parseInt(obj.uniqueDevices || obj.uniqueDeviceTracking, 10));
+            timelineActiveDevicesData.push(newArray);
+          });
+          break;
+        default:
+          break;
       }
     });
     timelineActiveDevicesDataPrior = _.orderBy(timelineActiveDevicesDataPrior, function(item) {
@@ -928,24 +927,24 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     timelineSessionsData = []; // Cleans it
     pvDataArray.timelineData[1].forEach(function(period, index) {
       switch (index) {
-      case 0:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
-          newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
-          timelineSessionsDataPrior.push(newArray);
-        });
-        break;
-      case 1:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push(moment(obj[context]).valueOf());
-          newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
-          timelineSessionsData.push(newArray);
-        });
-        break;
-      default:
-        break;
+        case 0:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
+            newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
+            timelineSessionsDataPrior.push(newArray);
+          });
+          break;
+        case 1:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push(moment(obj[context]).valueOf());
+            newArray.push(parseInt(obj.uniqueSessions || obj.sessionsCount, 10));
+            timelineSessionsData.push(newArray);
+          });
+          break;
+        default:
+          break;
       }
     });
     timelineSessionsDataPrior = _.orderBy(timelineSessionsDataPrior, function(item) {
@@ -960,24 +959,24 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     timelineScreenViewsData = []; // Cleans it
     pvDataArray.timelineData[2].forEach(function(period, index) {
       switch (index) {
-      case 0:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
-          newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
-          timelineScreenViewsDataPrior.push(newArray);
-        });
-        break;
-      case 1:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push(moment(obj[context]).valueOf());
-          newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
-          timelineScreenViewsData.push(newArray);
-        });
-        break;
-      default:
-        break;
+        case 0:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
+            newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
+            timelineScreenViewsDataPrior.push(newArray);
+          });
+          break;
+        case 1:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push(moment(obj[context]).valueOf());
+            newArray.push(parseInt(obj.totalPageViews || obj.count, 10));
+            timelineScreenViewsData.push(newArray);
+          });
+          break;
+        default:
+          break;
       }
     });
     timelineScreenViewsDataPrior = _.orderBy(timelineScreenViewsDataPrior, function(item) {
@@ -992,24 +991,24 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     timelineInteractionsData = []; // Cleans it
     pvDataArray.timelineData[3].forEach(function(period, index) {
       switch (index) {
-      case 0:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
-          newArray.push(parseInt(obj.totalEvents || obj.count, 10));
-          timelineInteractionsDataPrior.push(newArray);
-        });
-        break;
-      case 1:
-        period.data.forEach(function(obj) {
-          var newArray = [];
-          newArray.push(moment(obj[context]).valueOf());
-          newArray.push(parseInt(obj.totalEvents || obj.count, 10));
-          timelineInteractionsData.push(newArray);
-        });
-        break;
-      default:
-        break;
+        case 0:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push((moment(obj[context]).valueOf()) + pvDataArray.periodInMs);
+            newArray.push(parseInt(obj.totalEvents || obj.count, 10));
+            timelineInteractionsDataPrior.push(newArray);
+          });
+          break;
+        case 1:
+          period.data.forEach(function(obj) {
+            var newArray = [];
+            newArray.push(moment(obj[context]).valueOf());
+            newArray.push(parseInt(obj.totalEvents || obj.count, 10));
+            timelineInteractionsData.push(newArray);
+          });
+          break;
+        default:
+          break;
       }
     });
     timelineInteractionsDataPrior = _.orderBy(timelineInteractionsDataPrior, function(item) {
@@ -1021,24 +1020,24 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
 
     // RENDER TIMELINE
     switch ($container.find('[name="timeline-selector"]:checked').val()) {
-    case 'timeline-active-users':
-      getChart().series[0].setData(timelineActiveDevicesDataPrior);
-      getChart().series[1].setData(timelineActiveDevicesData);
-      break;
-    case 'timeline-sessions':
-      getChart().series[0].setData(timelineSessionsDataPrior);
-      getChart().series[1].setData(timelineSessionsData);
-      break;
-    case 'timeline-screen-views':
-      getChart().series[0].setData(timelineScreenViewsDataPrior);
-      getChart().series[1].setData(timelineScreenViewsData);
-      break;
-    case 'timeline-clicks':
-      getChart().series[0].setData(timelineInteractionsDataPrior);
-      getChart().series[1].setData(timelineInteractionsData);
-      break;
-    default:
-      break;
+      case 'timeline-active-users':
+        getChart().series[0].setData(timelineActiveDevicesDataPrior);
+        getChart().series[1].setData(timelineActiveDevicesData);
+        break;
+      case 'timeline-sessions':
+        getChart().series[0].setData(timelineSessionsDataPrior);
+        getChart().series[1].setData(timelineSessionsData);
+        break;
+      case 'timeline-screen-views':
+        getChart().series[0].setData(timelineScreenViewsDataPrior);
+        getChart().series[1].setData(timelineScreenViewsData);
+        break;
+      case 'timeline-clicks':
+        getChart().series[0].setData(timelineInteractionsDataPrior);
+        getChart().series[1].setData(timelineInteractionsData);
+        break;
+      default:
+        break;
     }
 
     Fliplet.Widget.autosize();
@@ -1718,18 +1717,18 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     getActiveUserData(analyticsStartDate, analyticsEndDate)
       .then(function(data) {
         switch (buttonSelected) {
-        case 'users-sessions':
-          renderTable(data, buttonSelected);
-          break;
-        case 'users-screen-views':
-          tableDataArray = [];
-          renderTable(data, buttonSelected);
-          break;
-        case 'users-clicks':
-          renderTable(data, buttonSelected);
-          break;
-        default:
-          break;
+          case 'users-sessions':
+            renderTable(data, buttonSelected);
+            break;
+          case 'users-screen-views':
+            tableDataArray = [];
+            renderTable(data, buttonSelected);
+            break;
+          case 'users-clicks':
+            renderTable(data, buttonSelected);
+            break;
+          default:
+            break;
         }
       });
   }
@@ -1740,17 +1739,17 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     getPopularScreenData(analyticsStartDate, analyticsEndDate)
       .then(function(data) {
         switch (buttonSelected) {
-        case 'screens-screen-views':
-          renderTable(data, buttonSelected);
-          break;
-        case 'screens-sessions':
-          renderTable(data, buttonSelected);
-          break;
-        case 'screens-clicks':
-          renderTable(data, buttonSelected);
-          break;
-        default:
-          break;
+          case 'screens-screen-views':
+            renderTable(data, buttonSelected);
+            break;
+          case 'screens-sessions':
+            renderTable(data, buttonSelected);
+            break;
+          case 'screens-clicks':
+            renderTable(data, buttonSelected);
+            break;
+          default:
+            break;
         }
       });
   }
