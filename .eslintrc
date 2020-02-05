@@ -1,0 +1,7 @@
+{
+  "globals": {
+    "Highcharts": true,
+    "tableDataArray": true
+  },
+  "extends": "fliplet"
+}
