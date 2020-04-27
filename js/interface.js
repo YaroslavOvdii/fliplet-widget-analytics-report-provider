@@ -6,6 +6,10 @@ var widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
 var data = Fliplet.Widget.getData(widgetId) || {};
 var element = $('.app-analytics-container');
 
+window.addEventListener('resize', function() {
+  Fliplet.Widget.autosize();
+});
+
 // Sample implementation to initialise the widget
 analyticsReports.push({
   id: data.id,
@@ -29,7 +33,7 @@ Fliplet.Widget.register('AnalyticsReport:1.0.0', function() {
     } else if (options.uuid) {
       report = _.find(analyticsReports, { uuid: parseInt(options.uuid, 10) });
     } else if (typeof options.index !== 'undefined') {
-      report = analyticsReports[parseInt(options.index), 10];
+      report = analyticsReports[parseInt(options.index, 10)];
     } else {
       throw new Error('There are multiple reports on the page. An id/uuid/index must be provided.');
     }
@@ -45,4 +49,3 @@ Fliplet.Widget.register('AnalyticsReport:1.0.0', function() {
     getReport: getReport
   };
 });
-
