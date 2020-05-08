@@ -577,6 +577,17 @@ span.analytics-box-number-prior {
   display: none !important;
 }
 
+.app-analytics-container .dataTables_wrapper .dataTables_processing {
+  background: rgba(255, 255, 255, 0.9);
+  height: 100%;
+  left: 0;
+  margin: auto;
+  padding-top: 25%;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
 .loader {
   transition: bottom 0.25s;
   pointer-events: none;
