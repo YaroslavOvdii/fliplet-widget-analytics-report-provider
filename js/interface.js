@@ -7,7 +7,9 @@ var data = Fliplet.Widget.getData(widgetId) || {};
 var element = $('.app-analytics-container');
 
 window.addEventListener('resize', function() {
-  Fliplet.Widget.autosize();
+  if (!$('body').hasClass('freeze')) {
+    Fliplet.Widget.autosize();
+  }
 });
 
 // Sample implementation to initialise the widget
