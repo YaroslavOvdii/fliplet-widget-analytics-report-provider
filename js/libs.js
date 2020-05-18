@@ -26,6 +26,7 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var chartEmptyData = [[], []];
   var cachedUserActionData = { data: [] };
   var cachedScreenActionData = { data: [] };
+  var currentTable;
 
   var actionsPerUserTable;
   var actionsPerScreenTable;
@@ -43,21 +44,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
   var configTableContext = {
     'users-sessions': {
       dataIndex: 0,
-      tableRows: [
-        {
-          key: 'User',
-          value: ['_userEmail', 'userEmail']
-        },
-        {
-          key: 'Sessions',
-          value: ['sessionsCount', 'uniqueSessions', 'count']
-        }
-      ],
       tableSelector: '.active-users-full-table-sessions',
-      table: undefined,
-      tableColumns: [
-        { data: 'User' },
-        { data: 'Sessions' }
+      columns: [
+        { data: 'userEmail' },
+        { data: 'count' }
       ],
       otherTableOne: 'users-screen-views',
       otherTableTwo: 'users-clicks',
@@ -67,22 +57,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     },
     'users-screen-views': {
       dataIndex: 1,
-      tableRows: [
-        {
-          key: 'User',
-          value: ['_userEmail', 'userEmail']
-        },
-        {
-          key: 'Screen views',
-          value: ['count', 'totalPageViews']
-        }
+      columns: [
+        { data: 'userEmail' },
+        { data: 'count' }
       ],
       tableSelector: '.active-users-full-table-views',
-      table: undefined,
-      tableColumns: [
-        { data: 'User' },
-        { data: 'Screen views' }
-      ],
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-clicks',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-clicks',
@@ -91,22 +70,11 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     },
     'users-clicks': {
       dataIndex: 2,
-      tableRows: [
-        {
-          key: 'User',
-          value: ['_userEmail', 'userEmail']
-        },
-        {
-          key: 'Interactions',
-          value: ['count', 'totalEvents']
-        }
+      columns: [
+        { data: 'userEmail' },
+        { data: 'count' }
       ],
       tableSelector: '.active-users-full-table-clicks',
-      table: undefined,
-      tableColumns: [
-        { data: 'User' },
-        { data: 'Interactions' }
-      ],
       otherTableOne: 'users-sessions',
       otherTableTwo: 'users-screen-views',
       selectorsToHide: '.active-users-full-table-sessions, .active-users-full-table-views',
@@ -115,21 +83,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     },
     'screens-screen-views': {
       dataIndex: 0,
-      tableRows: [
-        {
-          key: 'Screen name',
-          value: ['_pageTitle', 'pageTitle']
-        },
-        {
-          key: 'Screen views',
-          value: ['count', 'totalPageViews']
-        }
-      ],
       tableSelector: '.popular-sessions-full-table-views',
-      table: undefined,
-      tableColumns: [
-        { data: 'Screen name' },
-        { data: 'Screen views' }
+      columns: [
+        { data: 'pageTitle' },
+        { data: 'count' }
       ],
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-clicks',
@@ -139,21 +96,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     },
     'screens-sessions': {
       dataIndex: 1,
-      tableRows: [
-        {
-          key: 'Screen name',
-          value: ['_pageTitle', 'pageTitle']
-        },
-        {
-          key: 'Sessions',
-          value: ['sessionsCount', 'uniqueSessions', 'count']
-        }
-      ],
       tableSelector: '.popular-sessions-full-table-sessions',
-      table: undefined,
-      tableColumns: [
-        { data: 'Screen name' },
-        { data: 'Sessions' }
+      columns: [
+        { data: 'pageTitle' },
+        { data: 'count' }
       ],
       otherTableOne: 'screens-screen-views',
       otherTableTwo: 'screens-clicks',
@@ -163,21 +109,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     },
     'screens-clicks': {
       dataIndex: 2,
-      tableRows: [
-        {
-          key: 'Screen name',
-          value: ['_pageTitle', 'pageTitle']
-        },
-        {
-          key: 'Interactions',
-          value: ['count', 'totalEvents']
-        }
-      ],
       tableSelector: '.popular-sessions-full-table-clicks',
-      table: undefined,
-      tableColumns: [
-        { data: 'Screen name' },
-        { data: 'Interactions' }
+      columns: [
+        { data: 'pageTitle' },
+        { data: 'count' }
       ],
       otherTableOne: 'screens-sessions',
       otherTableTwo: 'screens-screen-views',
@@ -1659,103 +1594,111 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
     });
   }
 
-  function renderTable(data, context) {
-    tableDataArray = [];
-    data[configTableContext[context].dataIndex].forEach(function(row) {
-      var newObj = {};
-
-      [0, 1].forEach(function(idx) {
-        var fieldKey = configTableContext[context].tableRows[idx].key;
-        var values = configTableContext[context].tableRows[idx].value;
-
-        if (!Array.isArray(values)) {
-          values = [values];
-        }
-
-        configTableContext[context].tableRows[idx].value.forEach(function(val) {
-          newObj[fieldKey] = newObj[fieldKey] || row[val] || null;
-        });
-      });
-
-      tableDataArray.push(newObj);
-    });
-    if (configTableContext[context].table) {
-      configTableContext[context].table.clear();
-      configTableContext[context].table.rows.add(tableDataArray);
-      configTableContext[context].table.draw();
-    } else {
-      configTableContext[context].table = $(configTableContext[context].tableSelector).DataTable({
-        data: tableDataArray,
-        columns: configTableContext[context].tableColumns,
-        dom: 'Blfrtip',
-        buttons: [
-          {
-            extend: 'excel',
-            text: 'export visible entries to Excel'
-          }
-        ],
-        lengthMenu: [10, 25, 50, 100, 500],
-        order: configTableContext[context].order,
-        responsive: {
-          details: {
-            display: $.fn.dataTable.Responsive.display.childRow
-          }
-        }
-      });
+  function renderDataTable(xhrOptions, context, column) {
+    if (currentTable) {
+      currentTable.destroy();
     }
-    if (configTableContext[configTableContext[context].otherTableOne].table) {
-      configTableContext[configTableContext[context].otherTableOne].table.destroy();
-      configTableContext[configTableContext[context].otherTableOne].table = null;
-    }
-    if (configTableContext[configTableContext[context].otherTableTwo].table) {
-      configTableContext[configTableContext[context].otherTableTwo].table.destroy();
-      configTableContext[configTableContext[context].otherTableTwo].table = null;
-    }
+
     $container.find(configTableContext[context].selectorsToShow).removeClass('hidden');
     $container.find(configTableContext[context].selectorsToHide).addClass('hidden');
+
+    var options = _.extend({}, configTableContext[context], {
+      ajax: function(data, callback, settings) {
+        var query = _.extend({}, xhrOptions);
+
+        query.limit = data.length;
+        query.offset = data.start;
+
+        if (data.search && data.search.value) {
+          query.where = {};
+          query.where[column] = { $iLike: '%' + data.search.value + '%' };
+        }
+
+        Fliplet.App.Analytics.Aggregate.get(query).then(function (results) {
+          callback({
+            data: results.logs,
+            recordsTotal: results.count,
+            recordsFiltered: results.count
+          })
+        });
+      },
+      dom: 'Blfrtip',
+      buttons: [
+        {
+          extend: 'excel',
+          text: 'export visible entries to Excel'
+        }
+      ],
+      lengthMenu: [10, 25, 50, 100, 500],
+      scrollY: 400,
+      scrollCollapse: true,
+      pageLength: 10,
+      processing: true,
+      serverSide: true,
+      responsive: {
+        details: {
+          display: $.fn.dataTable.Responsive.display.childRow
+        }
+      }
+    });
+
+    currentTable = $(options.tableSelector).DataTable(options);
   }
 
   function getMoreActiveUsers() {
     var buttonSelected = $('[name="users-selector"]:checked').val();
+    var xhrOptions =  {
+      source: source,
+      group: 'user',
+      order: [['count', 'DESC']],
+      from: analyticsStartDate,
+      to: analyticsEndDate,
+      includeCount: true
+    };
 
-    getActiveUserData(analyticsStartDate, analyticsEndDate)
-      .then(function(data) {
-        switch (buttonSelected) {
-          case 'users-sessions':
-            renderTable(data, buttonSelected);
-            break;
-          case 'users-screen-views':
-            tableDataArray = [];
-            renderTable(data, buttonSelected);
-            break;
-          case 'users-clicks':
-            renderTable(data, buttonSelected);
-            break;
-          default:
-            break;
-        }
-      });
+    switch (buttonSelected) {
+      case 'users-sessions':
+        xhrOptions.sum = 'uniqueSessions';
+        break;
+      case 'users-screen-views':
+        xhrOptions.sum = 'totalPageViews';
+        break;
+      case 'users-clicks':
+        xhrOptions.sum = 'totalEvents';
+        break;
+      default:
+        return;
+    }
+
+    renderDataTable(xhrOptions, buttonSelected, 'userEmail');
   }
 
   function getMorePopularScreens() {
     var buttonSelected = $('[name="screen-selector"]:checked').val();
+    var xhrOptions =  {
+      source: source,
+      group: 'page',
+      order: [['count', 'DESC']],
+      from: analyticsStartDate,
+      to: analyticsEndDate,
+      includeCount: true
+    };
 
-    getPopularScreenData(analyticsStartDate, analyticsEndDate)
-      .then(function(data) {
-        switch (buttonSelected) {
-          case 'screens-screen-views':
-            renderTable(data, buttonSelected);
-            break;
-          case 'screens-sessions':
-            renderTable(data, buttonSelected);
-            break;
-          case 'screens-clicks':
-            renderTable(data, buttonSelected);
-            break;
-          default:
-            break;
-        }
-      });
+    switch (buttonSelected) {
+      case 'screens-screen-views':
+        xhrOptions.sum = 'totalPageViews';
+        break;
+      case 'screens-sessions':
+        xhrOptions.sum = 'uniqueSessions';
+        break;
+      case 'screens-clicks':
+        xhrOptions.sum = 'totalEvents';
+        break;
+      default:
+        return;
+    }
+
+    renderDataTable(xhrOptions, buttonSelected, 'pageTitle');
   }
 
   function start() {
