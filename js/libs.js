@@ -1609,6 +1609,10 @@ Fliplet.Registry.set('comflipletanalytics-report:1.0:core', function(element, da
         query.limit = data.length;
         query.offset = data.start;
 
+        query.order = data.order.map(function (order) {
+          return [data.columns[order.column].data, order.dir];
+        });
+
         if (data.search && data.search.value) {
           query.where = {};
           query.where[column] = { $iLike: '%' + data.search.value + '%' };
